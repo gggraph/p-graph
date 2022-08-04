@@ -1,0 +1,78 @@
+<head>
+<title>TEZO GRAPH</title>
+      <link rel="stylesheet" href="fonts/font.css">
+    
+<!-- backup the prompt because we did bad things :3 -->
+ <script>
+     var originalPrompt = window.prompt;
+</script>
+    
+<!-- dependecy -->
+<script type="text/javascript" src="dependency/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="dependency/web3.min.js"></script>
+ <script src="https://unpkg.com/@taquito/taquito@9.1.0/dist/taquito.min.js"
+crossorigin="anonymous" ></script>
+
+
+<!-- utils -->
+<script type="text/javascript" src="utils/keyboardmap.js"></script>
+<script type="text/javascript" src="utils/utils.js"></script>
+<script type="text/javascript" src="utils/web3utils.js"></script>
+    
+<!-- engine -->
+<script type="text/javascript" src="engine/editor.js"></script>
+<script type="text/javascript" src="engine/prompt.js"></script>
+<script type="text/javascript" src="engine/screen.js"></script>
+<script type="text/javascript" src="engine/thumbnail.js"></script>
+<script type="text/javascript" src="engine/windows.js"></script>
+<script type="text/javascript" src="engine/sound.js"></script>
+<script type="text/javascript" src="main.js"></script>
+    
+<!-- bloc -->
+<script type="text/javascript" src="bloc/bloc.js"></script>
+<script type="text/javascript" src="bloc/bloc_special.js"></script>
+
+<!-- ide -->
+<script type="text/javascript" src="ide/ide.js"></script>
+<script type="text/javascript" src="ide/interpreter.js"></script>
+
+<!-- io -->
+<script type="text/javascript" src="io/fileSaver.js"></script>
+<script type="text/javascript" src="io/io_lib.js"></script>
+<script type="text/javascript" src="io/io_map.js"></script>
+    
+<!-- lib -->
+<script type="text/javascript" src="lib/lib.js"></script>
+<script type="text/javascript" src="lib/doc.js"></script>
+
+<!-- menu -->
+<script type="text/javascript" src="menu/dropmenu.js"></script>
+<script type="text/javascript" src="menu/menu.js"></script>
+
+
+<!-- Web3 -->
+<script type="text/javascript" src="web3/Network.js"></script>
+<script type="text/javascript" src="web3/Ethereum.js"></script>
+<script type="text/javascript" src="web3/Tezos.js"></script>
+    
+</head>
+
+<body>
+
+    <form id='mainform' style="position:relative"> 
+    </form>
+    <form id='explorer' style="position:relative"> <!--ICI canvas explorer--> 
+   </form>
+   <form id='form1' style="position:relative"> <!--ICI canvas general--> 
+   </form>
+    <form id='explorer' style="position:relative"> <!--ICI canvas explorer--> 
+   </form>
+    
+     <form id = 'form2' method="post" enctype="multipart/form-data" style="position:relative">
+        <div id = 'd2' style="position:absolute; top:-100px; left:-100px; z-index:99">
+            <label for="input-file">Load File:</label><br>
+            <input type="file" id="input-file">
+        </div>
+    </form>
+    
+</body>
