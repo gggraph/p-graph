@@ -1,5 +1,5 @@
 <p align="center">
-  ![](git-content/tezintroloop.gif)
+  <img src=git-content/tezintroloop.gif />
 </p>
 
 
