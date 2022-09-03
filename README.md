@@ -27,12 +27,25 @@ Code works with blocks. Blocks are small item put in a **patch** environment tha
 Any input can be wired to any output. Any output can be wired to any input. When inputs of a block receiving data, the block run its internal code,
 eventually modifying the data, then output it and the propagation continue. 
 In most configuration, only the first input trigger the block's code, so, in most case, to propagate data, blocks ' outputs should be wired to other blocks' first input.
+talk about memory.
+talk about the best is to load example project.
+present all of this behind.
 <p>
   <img src=git-content/basiclogic.gif width="200" height="320" />
    <img src=git-content/basiclogic2.gif width="200" height="320" />
   <img src=git-content/clockloop.gif width="200" height="320" />
   <img src=git-content/outinlogic.gif width="200" height="320" />
 </p>
+
+## User Interaction
+
+Here some of the most important shortkey/tips you should know before starting a new patch
+
+There is a lot of special blocks that will let user have specific interaction with numbers, array, etc...
+<p>
+  <img src=git-content/specialblocks.gif />
+</p>
+
 
 ## Outputs
 
