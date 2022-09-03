@@ -8,7 +8,6 @@ Graphy is a visual programming langage inspired by Puredata running inside brows
 
 Its main purpose is to be easy to extend, easy to use, easy to modify.
 
-
 # Getting started
 
 ## Logic
@@ -51,8 +50,7 @@ Here some of the most important shortkey/tips you should know before starting a 
   <img src=git-content/draw.gif width="600" height="300"/>
 </p>
 
-
-**Graphy can output audio or graphics to any canvas**. 
+**Graphy can output graphics to any canvas**. 
 
 Left side of interface is the main screen where any block's code will draw by default.
 Most **HTML5 canvas graphics command** are implemented to blocks'code. For example, **[pix]** block will draw a pixel to the current screen. **[rect]** block
@@ -60,7 +58,7 @@ will fill a rectangle, etc..
 
 Double clicking on the main screen will open a mini portable screen which can be more convenient to work with! 
 
-Graphy use the **Web Audio API**. Read audio documentation to get further. See [a dummy patch of a single-oscillator synth](https://raw.githubusercontent.com/gggraph/p-graph/main/git-content/synthseq.mp4)
+**Graphy use the Web Audio API**. Read audio documentation to get further. See [a dummy patch of a single-oscillator synth](https://raw.githubusercontent.com/gggraph/p-graph/main/git-content/synthseq.mp4)
 
 ## Code editor
 <p>
