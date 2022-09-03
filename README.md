@@ -1,3 +1,6 @@
-# Graph
-![](git-content/tezintroloop.gif)
-a visual programming langage inside browser
+<p align="center">
+  ![](git-content/tezintroloop.gif)
+</p>
+
+
+
