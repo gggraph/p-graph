@@ -41,20 +41,24 @@ present all of this behind.
 
 Here some of the most important shortkey/tips you should know before starting a new patch
 
-* Press [n] key to create a new block at mouse position. This will greatly increase your workflow.
-* Double clicking on block to rename it. Once renamed, block will automatically be reload from **library** entries if type is found.
-* Press [suppr] key when renaming a block will delete the block.
-* Hold [control] key above a block to see its documentation.
-* Hold [control] key to interact with specific block in edit mode (default mode).
+*  Press [n] key to create a new block at mouse position. This will greatly increase your workflow.
+*  Double clicking on block to rename it. Once renamed, block will automatically be reload from **library** entries if type is found.
+*  Press [suppr] key when renaming a block will delete the block.
+*  Hold [control] key above a block to see its documentation.
+*  Hold [control] key to interact with specific block in edit mode (default mode).
 
-There is a lot of special blocks that will let user have specific interaction with numbers, array, etc...
-
-<p align="center">
-  <img src=git-content/draw.gif width="600" height="400"/>
+## Outputs
+<p> 
+  <img src=git-content/draw.gif width="600" height="300"/>
 </p>
 
 
-## Outputs
+
+
+
+https://user-images.githubusercontent.com/62741099/188279047-0699c034-af5c-4eaa-bac2-d77ebff38a4a.mp4
+
+
 
 Graphy can output audio or graphics to any canvas. 
 
@@ -74,7 +78,9 @@ A dummy patch of a single-oscillator synth.
 one video of sound. 
 
 ## Code editor
-
+<p>
+  <img src=git-content/helloworld.gif width="400" height="600"/>
+</p>  
 ## Save and share
 
 # Extensions
