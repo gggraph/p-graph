@@ -64,6 +64,57 @@ Double clicking on the main screen will open a mini portable screen which can be
 <p>
   <img src=git-content/helloworld.gif width="400" height="600"/>
 </p>  
+
+A code editor is implemented that allows user to **directly change blocks behaviour** and write new type of block to **extend the system**. 
+Code modification is 'interpreted' at run time and can operate even when the patch is running.
+
+```
+
+# a comment
+--decl
+inp(2)
+outp(3)
+memset(5)
+
+--code
+mem(0) = 'hello world'
+mem(2) = mem(0) + Math.PI
+out0(0)
+
+--ipf4
+mem(1) = 'called from non-standard input!'
+out1(1)
+
+```
+This block code above has any **langage-specific words you should learn** to understand how the system works. 
+
+Code **segment** are define using **region**. Any line behind declarator are specific to its region until another region is declared.
+
+| region name     | event                                |
+| --------------- | ------------------------------------ |
+| --decl          | run at block creation                |
+| --code          | run when first input receive value   |
+| --ipf4          | run when fifth input receive value   |
+| --ipf1          | run when second input receive value  |
+
+**Note that any number can follow --ipf region while there is enough inputs to the block** 
+
+| function name   | behaviour                            |
+| --------------- | ------------------------------------ |
+| inp             | Set number of input of the block     |
+| outp            | Set number of output of the block    |
+| memset*         | Set number of block's memory slots   |
+| mem             | Access memory slot value             |
+| out0            | Output memory slot value at first input
+| out1          | Output memory slot value at second input
+
+
+**Note that memory slot length of a block equals its input number at creation. memset can be used to extend block memory to handle more data**
+
+**Note that argument of out instruction is a memory slot index**
+
+Otherwise any javascript code inside region will work good if not conflicting with functions above.
+
 ## Save and share
 
 ## What's new?
