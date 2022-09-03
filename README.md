@@ -27,10 +27,10 @@ Code works with blocks. Blocks are small item put in a **patch** environment tha
 Any input can be wired to any output. Any output can be wired to any input. When inputs of a block receiving data, the block run its internal code,
 eventually modifying the data, then output it and the propagation continue. 
 In most configuration, only the first input trigger the block's code, so, in most case, to propagate data, blocks ' outputs should be wired to other blocks' first input.
-<p align="center">
+<p>
   <img src=git-content/basiclogic.gif width="200" height="320" />
+   <img src=git-content/basiclogic2.gif width="200" height="320" />
 </p>
-![](git-content/basiclogic.gif =250x250)
 
 ## Outputs
 
