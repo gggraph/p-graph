@@ -50,7 +50,7 @@ Here some of the most important shortkey/tips you should know before starting a 
 There is a lot of special blocks that will let user have specific interaction with numbers, array, etc...
 
 <p align="center">
-  <img src=git-content/specialblocks_ext.gif width="600" height="320"/>
+  <img src=git-content/draw.gif width="600" height="400"/>
 </p>
 
 
