@@ -30,6 +30,8 @@ In most configuration, only the first input trigger the block's code, so, in mos
 <p>
   <img src=git-content/basiclogic.gif width="200" height="320" />
    <img src=git-content/basiclogic2.gif width="200" height="320" />
+  <img src=git-content/clockloop.gif width="200" height="320" />
+  <img src=git-content/outinlogic.gif width="200" height="320" />
 </p>
 
 ## Outputs
