@@ -81,12 +81,13 @@ mem(0) = 'hello world'
 mem(2) = mem(0) + Math.PI
 out0(0)
 
---ipf4
+--ipf2
 mem(1) = 'called from non-standard input!'
 out1(1)
 
 ```
-This block code above has any **langage-specific words you should learn** to understand how the system works. 
+This block code above has any **langage-specific words you should learn** to understand how the system works. This code will output 'Hello world' when 
+first input is triggered. Let's see why.
 
 Code **segment** are define using **region**. Any line behind declarator are specific to its region until another region is declared.
 
@@ -117,6 +118,15 @@ Otherwise any javascript code inside region will work good if not conflicting wi
 
 ## Save and share
 
+User can save its patch or any block's code modification done easily in a readable format. 
+
+Patch can be saved as .map file ( this file does not contains block code ) or the whole project (code and patch structure) as .tezgr file
+
+Code can be saved separately as .lib file. 
+
+Those file can be shared and loaded to other cession. You can either load those file to overwrite current files used or import to add patch structure
+to an existing one or expand block possibility for .lib file. Comparing to **Pd**, .map file are similar to .pd file.
+
 ## What's new?
 
 **03.09.2022**
@@ -127,9 +137,10 @@ Otherwise any javascript code inside region will work good if not conflicting wi
 * Improving documentation. User can now set mouse on block and see tips while holding control key.
 
 
-# Extensions
+## Extensions
 
-## web3
-
-## $glyph
+| name            |                                 |
+| --------------- | ------------------------------------ |
+| web3            | block can interact with Tezos and Ethereum blockchain                |
+| $glyph          | user can write code by drawing shapes. Use $p glyph recognition   |
 
