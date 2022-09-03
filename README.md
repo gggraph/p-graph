@@ -8,14 +8,6 @@ Graphy is a visual programming langage inspired by Puredata running inside brows
 
 Its main purpose is to be easy to extend, easy to use, easy to modify.
 
-## What's new?
-
-**03.09.2022**
-
-* **New IO mechanism!** All blocks can trigger code from any of its inputs and not just first input.
-* Improving special block code readibility. Now, each special blocks has its own class extension of Block.
-* Improving visual parameters code. 
-* Improving documentation. User can now set mouse on block and see tips while holding control key.
 
 # Getting started
 
@@ -53,13 +45,6 @@ Here some of the most important shortkey/tips you should know before starting a 
 </p>
 
 
-
-
-
-https://user-images.githubusercontent.com/62741099/188279047-0699c034-af5c-4eaa-bac2-d77ebff38a4a.mp4
-
-
-
 Graphy can output audio or graphics to any canvas. 
 
 Left side of interface is the main screen where any block's code will draw by default.
@@ -75,6 +60,8 @@ get further.
 
 A dummy patch of a single-oscillator synth.
 
+
+
 one video of sound. 
 
 ## Code editor
@@ -82,6 +69,16 @@ one video of sound.
   <img src=git-content/helloworld.gif width="400" height="600"/>
 </p>  
 ## Save and share
+
+## What's new?
+
+**03.09.2022**
+
+* **New IO mechanism!** All blocks can trigger code from any of its inputs and not just first input.
+* Improving special block code readibility. Now, each special blocks has its own class extension of Block.
+* Improving visual parameters code. 
+* Improving documentation. User can now set mouse on block and see tips while holding control key.
+
 
 # Extensions
 
