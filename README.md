@@ -41,13 +41,37 @@ present all of this behind.
 
 Here some of the most important shortkey/tips you should know before starting a new patch
 
+* Press [n] key to create a new block at mouse position. This will greatly increase your workflow.
+* Double clicking on block to rename it. Once renamed, block will automatically be reload from **library** entries if type is found.
+* Press [suppr] key when renaming a block will delete the block.
+* Hold [control] key above a block to see its documentation.
+* Hold [control] key to interact with specific block in edit mode (default mode).
+
 There is a lot of special blocks that will let user have specific interaction with numbers, array, etc...
-<p>
-  <img src=git-content/specialblocks.gif />
+
+<p align="center">
+  <img src=git-content/specialblocks_ext.gif width="600" height="320"/>
 </p>
 
 
 ## Outputs
+
+Graphy can output audio or graphics to any canvas. 
+
+Left side of interface is the main screen where any block's code will draw by default.
+Most HTML5 canvas graphics command are implemented to blocks'code. For example, [pix] block will draw a pixel to the current screen. [rect] block
+will fill a rectangle, etc..
+
+Double clicking on the main screen will open a mini portable screen which can be more convenient to work with! 
+
+one gif of screen output
+
+Graphy use the **Web Audio API**. Some blocks can output wave, some blocks can modify enveloppe of wave, some blocks can . See Audio documentation to 
+get further.
+
+A dummy patch of a single-oscillator synth.
+
+one video of sound. 
 
 ## Code editor
 
