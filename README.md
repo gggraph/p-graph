@@ -1,6 +1,7 @@
 <p align="center">
   <img src=git-content/tezintroloop.gif />
 </p>
+
 # Graphy
 
 Graphy is a visual programming langage inspired by Puredata running inside browser.
