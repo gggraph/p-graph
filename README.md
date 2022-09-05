@@ -8,6 +8,8 @@ A visual programming langage inspired by Puredata running inside browser.
 
 Its main purpose is to be easy to extend, easy to use, easy to modify.
 
+You can test it [here](https://bleuprofond.art/tezgr/demo/)
+
 # Getting started
 
 ## Logic
