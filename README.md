@@ -44,6 +44,7 @@ Here some of the most important shortkey/tips you should know before starting a 
 *  Press **[n]** key to create a new block at mouse position. This will greatly increase your workflow.
 *  Double click on block to rename it. Once renamed, block will automatically be reload from library entries if type is found.
 *  Press **[suppr]** key when renaming a block will delete the block.
+*  Press **[enter]** key to show/hide code editor. 
 *  Hold **[control]** key above a block to see its documentation.
 *  Hold **[control]** key to interact with specific block in edit mode (default mode).
 
