@@ -668,7 +668,7 @@ class Block
     }
     ProccessLinking()
     {
-        var r = Editor.GetValidIOAtPosition(this.wiringData);
+        var r = Editor.GetValidIOAtPosition(this);
         if (!mousepressed )
         {
             // Get IO
