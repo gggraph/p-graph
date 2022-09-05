@@ -295,15 +295,18 @@ class PatchEditor
     
     
     // Wiring Utilities
-    GetValidIOAtPosition(wiringData)
+    GetValidIOAtPosition(block)
     {
         var i;
         for (i = 0; i < Blocks.length; i++)
         {
-            if ( Blocks[i].id == wiringData.blocId )
+            if ( block.Window != Blocks[i].Window)
                 continue;
             
-            if (wiringData.fromInput)
+            if ( Blocks[i].id == block.wiringData.blocId )
+                continue;
+            
+            if (block.wiringData.fromInput)
             {
                 var n;
                 for (n=0; n < Blocks[i].outputsboxes.length; n++)
@@ -330,7 +333,6 @@ class PatchEditor
 
         return false;
     }
-    
     
     // User Interaction
     OnDoubleClick()
@@ -394,18 +396,18 @@ onmousemove = function(e){  mouseX = e.clientX - cursorDimension.x ; mouseY=e.cl
 // General events 
 onkeydown = function(e)
 {
-    if ( e.keyCode == 17) // @ctrl
+    if ( e.keyCode == 17 || e.keyCode == 91 ) // @ctrl
     { 
         ctrlPressed = true;
     } 
-    if ( e.keyCode == 16) // @shift
+    if ( e.keyCode == 16 ) // @shift
     { 
        shftPressed = true;
     } 
 }
 onkeyup = function(e){
    
-    if ( e.keyCode == 17) // @ctrl
+    if ( e.keyCode == 17 || e.keyCode == 91) // @ctrl
     { 
       ctrlPressed = false;
     } 
