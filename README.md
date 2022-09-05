@@ -2,9 +2,9 @@
   <img src=git-content/tezintroloop.gif />
 </p>
 
-# Graphy
+# P-Graph
 
-Graphy is a visual programming langage inspired by Puredata running inside browser.
+A visual programming langage inspired by Puredata running inside browser.
 
 Its main purpose is to be easy to extend, easy to use, easy to modify.
 
@@ -12,7 +12,7 @@ Its main purpose is to be easy to extend, easy to use, easy to modify.
 
 ## Logic
 
-Graphy workspace is divide in two main parts. Left side of the environment is an **output screen**, right side contains the **patch and code editors**.
+workspace is divide in two main parts. Left side of the environment is an **output screen**, right side contains the **patch and code editors**.
 
 
 For those already familiar with **Pd**, this will not be a major shift : all work with **blocks**. Blocks are small items, set in a **patch** environment, that have **inputs and outputs, memory slots and embedded chunk of code**.
@@ -26,7 +26,7 @@ Any block has a specific number of memory slots (an array of data). When block r
 for example, when **receiving value into second input, data is stored to second memory slot** and so on. Blocks can output to any of its output slots the value 
 of any of its memory slots.
 
-To get familiar with **Graphy** system, you should load example projects and get a first look on the library documentation.
+To get familiar with **P-Graph** system, you should load example projects and get a first look on the library documentation.
 
 <p>
   <img src=git-content/basiclogic.gif width="200" height="320" />
@@ -50,7 +50,7 @@ Here some of the most important shortkey/tips you should know before starting a 
   <img src=git-content/draw.gif width="600" height="300"/>
 </p>
 
-**Graphy can output graphics to any canvas**. 
+**P-Graph can output graphics to any canvas**. 
 
 Left side of interface is the main screen where any block's code will draw by default.
 Most **HTML5 canvas graphics command** are implemented to blocks'code. For example, **[pix]** block will draw a pixel to the current screen. **[rect]** block
@@ -58,7 +58,7 @@ will fill a rectangle, etc..
 
 Double clicking on the main screen will open a mini portable screen which can be more convenient to work with! 
 
-**Graphy use the Web Audio API**. Read audio documentation to get further. See [a dummy patch of a single-oscillator synth](https://raw.githubusercontent.com/gggraph/p-graph/main/git-content/synthseq.mp4)
+**It uses the Web Audio API**. Read audio documentation to get further. See [a dummy patch of a single-oscillator synth](https://raw.githubusercontent.com/gggraph/p-graph/main/git-content/synthseq.mp4)
 
 ## Code editor
 <p>
