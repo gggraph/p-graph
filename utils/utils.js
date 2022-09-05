@@ -1,42 +1,4 @@
 
-// @ Class 
-class Canvas 
-{ 
-    constructor(canvas, div, box ){
-        this.general = canvas;
-        this.div     = div;
-        this.context = this.general.getContext('2d'); 
-        this.mouseisover = false;
-        this.mousepressed = false;
-        this.hasdoubleclicked = false;
-        this.box= box;
-        this.focusPosition = 0;
-        this.SetPositionAndDimension();
-    }
-    SetPosition()
-    {
-        this.div.style = "position:absolute; top:"+this.box.y+"px; left:"+this.box.x+"px; z-index:" + this.focusPosition; 
-    }
-    SetPositionAndDimension()
-    {
-        this.div.style = "position:absolute; top:"+this.box.y+"px; left:"+this.box.x+"px; z-index:" + this.focusPosition; 
-        this.general.width = this.box.w;
-        this.general.height = this.box.h;
-    }
-    Blank()
-    {
-       var _g = this.context;
-        var tempstyle = 'rgb(255,255,255)';
-       _g.fillStyle = 'rgb(255,255,255)'
-      _g.fillRect(0,0,this.box.w, this.box.h);
-        _g.fillStyle = tempstyle;
-    }
-    Fill()
-    {
-       var _g = this.context;
-      _g.fillRect(0,0,this.box.w, this.box.h);
-    }
-}
 
 class Vector2
 {
@@ -58,6 +20,32 @@ class Box
     }
 }
 
+// @ Hack
+
+function CopyToClipBoard(str) 
+{
+    
+  var el = document.createElement('textarea');  // Create a <textarea> element
+  el.value = str;                                 // Set its value to the string that you want copied
+  el.setAttribute('readonly', '');                // Make it readonly to be tamper-proof
+  el.style.position = 'absolute';                 
+  el.style.left = '-9999px';                      // Move outside the screen to make it invisible
+  document.body.appendChild(el);                  // Append the <textarea> element to the HTML document
+  var selected =            
+    document.getSelection().rangeCount > 0        // Check if there is any content selected previously
+      ? document.getSelection().getRangeAt(0)     // Store selection if found
+      : false;                                    // Mark as false to know no selection existed before
+  el.select();                                    // Select the <textarea> content
+  document.execCommand('copy');                   // Copy - only works as a result of a user action (e.g. click events)
+  document.body.removeChild(el);                  // Remove the <textarea> element
+  if (selected) {                                 // If a selection existed before copying
+    document.getSelection().removeAllRanges();    // Unselect everything on the HTML document
+    document.getSelection().addRange(selected);   // Restore the original selection
+    }
+    
+}
+
+
 // @ String
 function genrandomstring(size){
     randoms = '';
@@ -73,6 +61,11 @@ function genrandomstring(size){
 
 // @ Arithmetic
 
+function VectorsDistance(veca, vecb)
+{
+    return Math.abs(veca.x - vecb.x) + Math.abs(veca.y-vecb.y);
+    
+}
 function IsMouseInsideBox(box, canvas)
 {
     return mouseX-canvas.box.x > box.x && mouseX-canvas.box.x < box.x + box.w
@@ -239,24 +232,29 @@ function GetTextInsideLabel(label, labeldeclarator, script)
     return arr; // for testing purposes
     }
 
+
 //@IO
 function getFile(event) {
-	const input = event.target
+  const input = event.target
   if ('files' in input && input.files.length > 0) {
+      if ( input.files[0].name.endsWith(".ttf") ||  input.files[0].name.endsWith(".otf") ||  input.files[0].name.endsWith(".woff"))
+          LoadFontFromFile(input.files[0]);
+          
       if ( input.files[0].name.endsWith(".lib")){
          readFileContent(input.files[0]).then(content => { var arg = content.split("\r\n"); LoadLibraryFromTextFile(arg);  }).catch(error => console.log(error)) 
       }
       if ( input.files[0].name.endsWith(".map")){
-         readFileContent(input.files[0]).then(content => { var arg = content.split("\r\n"); LoadMapFromFile(arg); }).catch(error => console.log(error))
+         readFileContent(input.files[0]).then(content => { var arg = content.split("\r\n"); LoadMapFromFile(arg, Editor.Canvas); }).catch(error => console.log(error))
       }
       if ( input.files[0].name.endsWith(".tezgraph")){
-         readFileContent(input.files[0]).then(content => { var arg = content.split("\r\n"); LoadProjectFromFile(arg); }).catch(error => console.log(error))
+         readFileContent(input.files[0]).then(content => { var arg = content.split("\r\n"); LoadProjectFromFile(arg,Editor.Canvas); }).catch(error => console.log(error))
       }
       if ( input.files[0].name.endsWith(".json")){
          readFileContent(input.files[0]).then(content => { var arg = content.split("\r\n"); LoadContractABI(content); }).catch(error => console.log(error))
       }
 	
   }
+     ToolBar.SetSelection(-1);
 }
 
 function readFileContent(file) {

@@ -1,50 +1,187 @@
 
+// TODO ADD EASIER TO UNDERSTANT DISPLAY....
+class DisplayConfig
+{
+    constructor()
+    {
+        // @ General Height ratio as % of windows inner height.
+        
+        this.ToolBarHeight;
+        this.ThumbnailsHeight;
+        this.EditorHeight;
+        this.CodeEditorHeight;
+        this.PromptHeight;
+        
+        // @ Blocks visual parameters
+        this.BlockFontName = "Autopia";
+        this.BlockFontSize = 16;
+        this.BlockFont = "16px Autopia";
+        this.BlockFontWidth = 9;
+        this.BlockFillColor = 'rgb(255,255,255)';
+        this.BlockHighLightColor = 'rgb(0,0,255)';
+        this.BlockStrokeColor = 'rgb(0,0,0)';
+        this.BlockBorderWidth = 3;
+        this.WireColor = 'rgb(0,0,0)';
+        this.WireWidth = 1;
+        
+        // @ UI parameters 
+        
+        // Onglets parameters. Add -> Default max width 
+        this.OngletsFillColor = 'rgb(0,0,0)';
+        this.OngletsStrokeColor = 'rgb(255,255,255)';
+        this.OngletsHighLightColor = 'rgb(0,0,255)';
+        this.OngletsPassLightColor = 'rgb(50,50,50)';
+        
+        this.OngletsFontName = "Courier";
+        this.OngletsFontSize = 16;
+        this.OngletsFont = "bold 16px Fontlab";
+        
+        // @ ToolBar
+        
+        // @ DropDown
+        this.DropDownWidth = 200;
+        this.DropDownHeight;
+        
+        this.DropDownFont = "bold 18px Fontlab";
+        this.DropDownFontSize = 18;
+        this.DropDownFontName = "Fontlab";
+        
+        this.DropDownStrokeColor = 'rgb(0,0,0)';
+        this.DropDownFillColor = 'rgb(255,255,255)';
+        this.DropDownHighlightColor = 'rgb(0,0,255)';
+        
+        // @ Prompt Color 
+        this.PrompterFillColor = 'rgb(0,0,0)';
+        this.PrompterStrokeColor = 'rgb(255,255,255)';
+        this.PrompterHighlightColor = 'rgb(0,0,255)';
+        this.PrompterFont = "bold 22px Fontlab";
+        this.PrompterFontSize = 22;
+        this.PrompterFontName = "Fontlab"
+        
+    
+    }
+    UpdateFontsSize()
+    {
+            // default : width : 1920 height : 927
+        this.DropDownFont = "bold 18px Fontlab";
+        this.PrompterFont = "bold 20px Fontlab";
+        this.OngletsFont = "bold 16px Fontlab";
+    }
+    SetDefaultProportionFromScreenDimension()
+    {
+        var heightdim = 10;
+        this.ToolBarHeight    = Math.round(3/100 * (window.innerHeight-heightdim));
+        this.ThumbnailsHeight = Math.round(4/100 *  (window.innerHeight-heightdim));
+        this.EditorHeight     = Math.round(62/100 *  (window.innerHeight-heightdim));
+        this.CodeEditorHeight = Math.round(26/100 *  (window.innerHeight-heightdim));
+        this.PromptHeight     = Math.round(4/100 *  (window.innerHeight-heightdim));
+        this.DropDownHeight   = Math.round(3/100 *  (window.innerHeight-heightdim));
+    }
+    
+    SetBlockFont(fontSize, fontName)
+    {
+        this.BlockFontName = fontName;
+        this.BlockFontSize = fontSize;
+        this.BlockFont = fontSize+"px "+fontName;
+        this.BlockFontWidth = 9;
+    }
+    SetThumbnailFont(fontSize, fontName)
+    {
+        this.OngletsFontName = fontName;
+        this.OngletsFontSize = fontSize;
+        this.OngletsFont = fontSize+"px "+fontName;
+    }
+    SetNightMode()
+    {
+        this.BlockFontName = "Autopia";
+        this.BlockFontSize = 16;
+        this.BlockFont = "16px Autopia";
+        this.BlockFillColor = 'rgb(0,0,0)';
+        this.BlockHighLightColor = 'rgb(0,0,255)';
+        this.BlockStrokeColor =  'rgb(255,255,255)';
+        this.BlockBorderWidth = 3;
+        this.WireColor = 'rgb(255,255,255)';
+        this.WireWidth = 1;
+    }
+    GetHeightFromPourcentage(prct)
+    {
+        return Math.round((prct/100)* (window.innerHeight-40));
+    }
+}
+
+var VisualParameters;
+
 async function Boot()
 {
-  
+
     // @ Load stuff
     LoadFont();
+
+    
+    // @ Init All Objects
+    VisualParameters = new DisplayConfig(); 
+    ToolBar = new DropDownMenu(GetDefaultToolMap()); 
+    setInterval(function () {ToolBar.Run()}, 10);
+    
+    Editor = new PatchEditor();
+    ide = new IDE();
+    
+    // @ Init prompter
+    prompt = new Prompter();
+    
+    // @ Set up screens
+    ScreenCanvas = CreateCanvas(0,0,0,0);
+    ScreenCanvas.general.addEventListener('dblclick', function (e) {OpenCloseMiniScreen();});
+    OutputCanvas = ScreenCanvas;
+    // @ miniscreen : 
+    miniScreenCanvas = CreateCanvas(0,0,0,0);
+    miniScreenCanvas.Opened = false;
+    miniScreenCanvas.bordersize = 20;
+    miniScreenCanvas.general.addEventListener('dblclick', function (e) {OpenCloseMiniScreen();});
+    miniScreenCanvas.general.addEventListener("mousedown", OnMiniScreenMousePressed, false);
+    
+    
+    Documentation = new DocumentationDisplay(ScreenCanvas);
+    // @ Add window event listener
     document.getElementById('input-file').addEventListener('change', getFile);
     window.onresize = UpdateCanvasDimension;
     
-    // @ Set up editor
-    InitEditorCanvas();
-    //@ Set up screen
-    InitScreenCanvas();
-    // Set Up CodeEditor
-    InitPrompt();
-    InitIDECanvas();
-    // @ Set up thumbnails 
-    InitIDEThumbnails();
-    InitWDWThumbnails();
-    AddNewWindow("default"); 
-    //@set up explorer
-    InitProceduralExplorer();
-    //@set up tool bar for test ...
-    InitToolBar();
+    // @ Set default ratio
     ResizeScreenEditorRatio(window.innerWidth/2);
-    
+   
     // Web 3
     InitEthereumNetwork();
     InitTezosNetwork();
     SwitchToTezosNetwork("ithacanet");
     
-
+    await LoadUpdatedLib();
       //@ Load Default Project
-    await LoadExampleProject("blockchain");
+    await LoadExampleProject("midi synth demo");
    
     // Set PlayMode
-    document.body.style.cursor = "pointer";inPlayMode = true;
-    await LoadUpdatedLib();
+    Editor.inPlayMode = false;
     
     // OpenLibrary
-    OpenDoc();
+    Documentation.Open();
     
     //@ Start core loop
     setInterval(RunSystem, 10);
-   
+       
 }
 
+
+var FontUniqueIdentifier = 0;
+
+async function LoadFontFromFile(file)
+{
+    const data = await file.arrayBuffer();
+    var font = new FontFace('font'+FontUniqueIdentifier, data);
+    await font.load();
+    document.fonts.add(font);
+    FontUniqueIdentifier ++;
+    console.log(document.fonts)
+  
+}
 
 function LoadFont(){
 
@@ -74,68 +211,49 @@ function LoadFont(){
 function RunSystem()
 {
  
-   if ( miniScreenOpened)
-       UpdateMiniScreenPositionAndDimension();
+    
+   if ( miniScreenCanvas.Opened)
+       RunMiniScreen();
+   //    UpdateMiniScreenPositionAndDimension();
     // @ Display/Run Editor
-    RunEditor();
+    Editor.Run();
     
     // @ Display Lib if doc opened 
-   if ( UserReadLibrary)
+   if ( Documentation.Opened)
    {
-       DisplayDocumentation();
+       Documentation.Run();
    }
 }
 
 function ResizeScreenEditorRatio(screenwidth)
 {
-    DestroyallMenu();
-    scaleMenu();
-    // @Toolbar
-    ToolBar.Canvas.box =new Box(0,0,screenwidth, explorerBoxInterval);
-    ToolBar.Canvas.SetPositionAndDimension();
-    ToolBar.Blank();
-    ToolBar.Display();
-    // @ Resizing Screen
-    ScreenCanvas.box = new Box(0,ToolBar.Canvas.box.h,ToolBar.Canvas.box.w, window.innerHeight - ToolBar.Canvas.box.h - (window.innerHeight/20));
-    ScreenCanvas.SetPositionAndDimension();
-    var backupstyle = ScreenCanvas.context.fillStyle;
-    ScreenCanvas.context.fillStyle = 'rgb(0,0,0)';
-    ScreenCanvas.Fill();
-    ScreenCanvas.context.fillStyle = backupstyle;
-    // @ Proccess Mini Screen
-    if ( miniScreenOpened)
-        ForceResetMiniScreenPosition();
-     // @ Resizing Editor
-    EditorCanvas.box = new Box(screenwidth ,0,window.innerWidth - ScreenCanvas.box.w - 10, window.innerHeight - (window.innerHeight/20));
-    EditorCanvas.SetPositionAndDimension();
-    // @ Resizing Prompt
-    prompt.Canvas.box = new Box(EditorCanvas.box.x,(window.innerHeight-window.innerHeight/24-20),EditorCanvas.box.w, window.innerHeight/24 );
-    prompt.Canvas.SetPositionAndDimension();
-      // @ Resizing IDE
-     ide.Canvas.box = new Box(  EditorCanvas.box.x, window.innerHeight-window.innerWidth/8-20 - prompt.Canvas.box.h, EditorCanvas.box.w,  window.innerWidth/8); 
-     ide.Canvas.SetPositionAndDimension();
-     ide.DrawIde();
-     ide.DrawScriptText();
-     ide.tempBox = ide.Canvas.box;
-     ide.UnHideIDE();
-    // @ Resizing Thummbnails
-    // ide thumbnails
+    VisualParameters.SetDefaultProportionFromScreenDimension();
     
-    ideThumbnails.Canvas.box = new Box( EditorCanvas.box.x, window.innerHeight-ide.Canvas.box.h-prompt.Canvas.box.h-window.innerHeight/24-20, EditorCanvas.box.w, window.innerHeight/24);
-    ideThumbnails.Canvas.SetPositionAndDimension();
-    ideThumbnails.Draw();
-    windowThumbnails.Canvas.box = new Box( EditorCanvas.box.x, 0, EditorCanvas.box.w, window.innerHeight/24);
-    windowThumbnails.Canvas.SetPositionAndDimension();
-    windowThumbnails.Draw();
+    ToolBar.SetDImension(new Box(0,0,screenwidth, VisualParameters.ToolBarHeight));
+    // @ Resizing Screen
+    ScreenCanvas.box = new Box(0,ToolBar.Canvas.box.h,ToolBar.Canvas.box.w, window.innerHeight - ToolBar.Canvas.box.h - 20);
+    ScreenCanvas.SetPositionAndDimension();
+    ScreenCanvas.ForceFill('rgb(0,0,0)');
+    
+    // @ Proccess Mini Screen
+    //if ( miniScreenOpened)
+    //    ForceResetMiniScreenPosition();
+    
+    Editor.SetExplorerDimension(new Box(screenwidth+10, 0, window.innerWidth - ScreenCanvas.box.w - 20 ,VisualParameters.ToolBarHeight));
+    Editor.SetPatchDimension(new Box( screenwidth+10, Editor.WindowExplorer.Canvas.box.h, Editor.WindowExplorer.Canvas.box.w-10 , VisualParameters.EditorHeight))
+    Editor.WindowExplorer.Draw();
+    // @ Resizing Ide
+    ide.SetExplorerDimension( new Box(Editor.Canvas.box.x, Editor.Canvas.box.y+Editor.Canvas.box.h, Editor.Canvas.box.w, VisualParameters.ThumbnailsHeight));
+    ide.SetEditorDimension( new Box( Editor.Canvas.box.x, ide.CodeExplorer.Canvas.box.y + ide.CodeExplorer.Canvas.box.h, Editor.Canvas.box.w, VisualParameters.CodeEditorHeight));
+    ide.CodeExplorer.Draw();
+    // @ Resizing Prompt
+    prompt.Canvas.box = new Box(Editor.Canvas.box.x,ide.Canvas.box.y+ide.Canvas.box.h,Editor.Canvas.box.w, VisualParameters.PromptHeight);
+    prompt.Canvas.SetPositionAndDimension();
+    
     // @recompute bouton relative if library opened 
-    if ( !UserReadLibrary)
-        return;
-    barheight = ScreenCanvas.box.h / Library.length; 
-    barBox = new Box(ScreenCanvas.box.w-30, 0, 30, barheight);
-    docRelativeHeight =  docRealHeight;
-    docRelativeHeight-=ScreenCanvas.box.h; 
-    if ( docRelativeHeight < 0 )
-        docRelativeHeight = 0;
+    
+    if ( Documentation.Opened)
+        Documentation.ComputeYScrollingRatio();
 }
 
 function UpdateCanvasDimension()
@@ -152,24 +270,88 @@ function isEditorFocus()
 
 function SetFocusOnEditor()
 {
-    DestroyallMenu();
+    ToolBar.SetSelection(-1);
     divFocus = 1;
 }
 function SetFocusOnIDE()
 {
-     DestroyallMenu();
+     ToolBar.SetSelection(-1);
      divFocus = 2;
 }
 function SetFocusOnPrompt()
 {
-     DestroyallMenu();
+     ToolBar.SetSelection(-1);
      divFocus = 3;
 }
 function SetFocusOnScreen()
 {
     // @ Clear 
-     DestroyallMenu();
+     ToolBar.SetSelection(-1);
      divFocus = 4;
+}
+
+var mouseAccuracyCanvas = null;
+
+function CreateMouseAccuracyCanvas()
+{
+    if ( mouseAccuracyCanvas == null )
+    {
+        mouseAccuracyCanvas = CreateCanvas(0,0,0,0);
+        mouseAccuracyCanvas.general.onmousedown = function(){SetMouseAccuracy();};
+    }
+    mouseAccuracyCanvas.box = new Box (ScreenCanvas.box.w/4, ScreenCanvas.box.h/4, window.innerHeight /2, window.innerHeight /2);
+    mouseAccuracyCanvas.focusPosition = 999;
+    mouseAccuracyCanvas.SetPositionAndDimension();
+    DrawMouseAccuracy();
+   
+    // Add some listener
+   
+  
+}
+function DrawMouseAccuracy()
+{
+     var _g = mouseAccuracyCanvas.context;
+        // Fill
+    _g.fillStyle = 'rgb(0,0,0)'; 
+    _g.fillRect(0,0,mouseAccuracyCanvas.box.w, mouseAccuracyCanvas.box.h);  
+    
+    // Circle
+    _g.strokeStyle = 'rgb(255,255,255)'; 
+    _g.lineWidth = 3;
+    var centerx = mouseAccuracyCanvas.box.w/2;
+    var centery = mouseAccuracyCanvas.box.h/2;
+    var rad = 10;
+    _g.beginPath();
+    _g.arc(centerx, centery, rad, 0, 2* Math.PI, false);
+    _g.stroke();
+    _g.closePath();
+    
+    //Cross
+    _g.lineWidth = 3;
+        
+        // First line 
+    _g.beginPath();
+    _g.moveTo(0, mouseAccuracyCanvas.box.h/2);
+    _g.lineTo(mouseAccuracyCanvas.box.w, mouseAccuracyCanvas.box.h/2);
+    _g.closePath();
+    _g.stroke();
+    // First line 
+    _g.beginPath();
+    _g.moveTo(mouseAccuracyCanvas.box.w/2, 0);
+    _g.lineTo(mouseAccuracyCanvas.box.w/2, mouseAccuracyCanvas.box.h);
+    _g.closePath();
+    _g.stroke();
+}
+function SetMouseAccuracy()
+{
+    var mX = mouseX + cursorDimension.x;
+    var mY = mouseY + cursorDimension.y;
+    cursorDimension = new Vector2(mX-mouseAccuracyCanvas.box.x-mouseAccuracyCanvas.box.w/2, 
+                                 mY-mouseAccuracyCanvas.box.y-mouseAccuracyCanvas.box.h/2);
+     mouseAccuracyCanvas.box = new Box (0,0,0,0);
+     mouseAccuracyCanvas.focusPosition = 999;
+     mouseAccuracyCanvas.SetPositionAndDimension();
+    prompt.AddEventText("mouse calibration set to X"+cursorDimension.x + " Y"+cursorDimension.y);
 }
 
 

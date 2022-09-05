@@ -67,7 +67,11 @@ function LoadLibraryFromTextFile(text)
     //@ refresh all blocks code
     var i; 
     for (i= 0; i < Blocks.length; i++)
+    {
         TryLoadBlockFromLibraryEntries(Blocks[i]);
+        InterpreteBlockCode(Blocks[i]);
+    }
+        
     prompt.AddEventText(".lib successfully loaded")
 
     return linectr;

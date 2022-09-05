@@ -1,5 +1,5 @@
 <head>
-<title>TEZO GRAPH</title>
+<title> :D </title>
       <link rel="stylesheet" href="fonts/font.css">
     
 <!-- backup the prompt because we did bad things :3 -->
@@ -18,18 +18,21 @@
 <script type="text/javascript" src="utils/utils.js"></script>
 <script type="text/javascript" src="utils/web3utils.js"></script>
     
-<!-- engine -->
+<!-- ui -->
+<script type="text/javascript" src="ui/dropdown.js"></script>
+<script type="text/javascript" src="ui/onglets.js"></script>
+<script type="text/javascript" src="ui/screen.js"></script>
+<script type="text/javascript" src="ui/prompt.js"></script>
+<script type="text/javascript" src="ui/textbox.js"></script>
+<!-- engine -->    
 <script type="text/javascript" src="engine/editor.js"></script>
-<script type="text/javascript" src="engine/prompt.js"></script>
-<script type="text/javascript" src="engine/screen.js"></script>
-<script type="text/javascript" src="engine/thumbnail.js"></script>
-<script type="text/javascript" src="engine/windows.js"></script>
+<script type="text/javascript" src="engine/menumaps.js"></script>
 <script type="text/javascript" src="engine/sound.js"></script>
 <script type="text/javascript" src="main.js"></script>
     
 <!-- bloc -->
 <script type="text/javascript" src="bloc/bloc.js"></script>
-<script type="text/javascript" src="bloc/bloc_special.js"></script>
+<script type="text/javascript" src="bloc/bloc_ext.js"></script>
 
 <!-- ide -->
 <script type="text/javascript" src="ide/ide.js"></script>
@@ -44,11 +47,6 @@
 <script type="text/javascript" src="lib/lib.js"></script>
 <script type="text/javascript" src="lib/doc.js"></script>
 
-<!-- menu -->
-<script type="text/javascript" src="menu/dropmenu.js"></script>
-<script type="text/javascript" src="menu/menu.js"></script>
-
-
 <!-- Web3 -->
 <script type="text/javascript" src="web3/Network.js"></script>
 <script type="text/javascript" src="web3/Ethereum.js"></script>
@@ -58,6 +56,7 @@
 
 <body onload="Boot()">
 
+    
     <form id='mainform' style="position:relative"> 
     </form>
     <form id='explorer' style="position:relative"> <!--ICI canvas explorer--> 
@@ -73,5 +72,9 @@
             <input type="file" id="input-file">
         </div>
     </form>
+    
+   
+
+
     
 </body>

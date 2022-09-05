@@ -1,41 +1,25 @@
 //@ IO
+/*
+    Add Load Map/Project inside a specific canvas. :3
+*/
 
 var importing = true;
 
-async function LoadDefaultProject()
-{
-    $.ajax({
-        url : "defaultproject.txt",
-        dataType: "text",
-        async:false,
-        success : function (data) 
-        {
-            LoadNewProject();
-            var txt = data.toString().split("\r\n");
-            importing = false;
-            LoadProjectFromFile(txt);
-            
-            if ( !UserReadLibrary)
-                OpenDoc();
-        }
-        });
-        
-}
 async function LoadExampleProject(name)
 {
     name = "example/" + name;
     $.ajax({
-        url : name+".txt",
+        url : name+".map",
         dataType: "text",
         async:false,
         success : function (data) 
         {
-            if ( UserReadLibrary)
-                CloseDoc();
+            if ( Documentation.opened)
+                Documentation.Close();
             LoadNewProject();
             var txt = data.toString().split("\r\n");
             importing = false;
-            LoadProjectFromFile(txt);
+            LoadMapFromFile(txt, Editor.Canvas);
         }
         });
         
@@ -45,29 +29,20 @@ async function GenerateHTML()
     
 }
 // @ New project 
-function FastLoadNewProject()
-{
-     Blocks = new Array();
-    // Empty thumbnails
-    CloseAllIDETabs();
-    // Empty Windows 
-    CloseAllWindows();
-    
-    
-}
 function LoadNewProject()
 {
-    var i; 
-    for (i = Blocks.length-1; i >=0 ; i-- )
-    {
-        if ( Blocks[i].Window != "doc")
-            Blocks[i].Destroy();
-    }
+    // Close Documentation
+    Documentation.Close();
+    
+    Blocks = new Array();
+    // Empty thumbnails
+    ide.CloseAllTabs();
     // Empty Windows 
-    CloseAllWindows();
+    Editor.CloseAllWindows();
+    
 }
 
-const saveBlockMap = ["knob","slider","/","*","+","-","number","switch"]
+const saveBlockMap = ["knob","slider","/","*","+","-","number","switch", "msg"]
 function IsBlockElligibleForSave(bloc)
 {
     if ( saveBlockMap.indexOf(bloc.typename) > -1)
@@ -78,15 +53,15 @@ function IsBlockElligibleForSave(bloc)
 
 function GetMapDataAsText()
 {
-    if ( UserReadLibrary)
-        CloseDoc();
+    Documentation.Close();
+    
     // @ Just Save All blocks. ( Their ID, their Typename, their spacename, their x, their y)
     var text = new Array();
-    text.push(Windows.length+"\r\n");
+    text.push(Editor.Windows.length+"\r\n");
     var i ; 
-    for (i = 0 ; i < Windows.length; i++ )
+    for (i = 0 ; i < Editor.Windows.length; i++ )
     {
-        text.push(Windows[i]+"\r\n");
+        text.push(Editor.Windows[i]+"\r\n");
     }
     text.push(Blocks.length+"\r\n");
     
@@ -125,20 +100,18 @@ function GetMapDataAsText()
             text.push("0"+"\r\n");
     }
     // @ Opened Window
-    // @ gives error here 
-    var numwin = Windows.length; 
-    if ( UserReadLibrary)
-        numwin--;
+    
+    var numwin = Editor.WindowExplorer.Thumbnails.length; 
     text.push(numwin+"\r\n");
-    for (i = 0 ; i<Windows.length ;i++)
+    
+    for (i = 0 ; i< Editor.WindowExplorer.Thumbnails.length ;i++)
     {
-        if ( Windows[i] != "doc")
-            text.push(Windows[i]+"\r\n");
+        text.push(Editor.WindowExplorer.Thumbnails[i]+"\r\n");
     }
     // @ Opened Thumbnails
-    text.push(ideThumbnails.Thumbnails.length+"\r\n");
-    for (i = ideThumbnails.Thumbnails.length-1 ; i >= 0 ;i--)
-        text.push(ideThumbnails.Thumbnails[i].id+"\r\n");
+    text.push(ide.CodeExplorer.Thumbnails.length+"\r\n");
+    for (i = ide.CodeExplorer.Thumbnails.length-1 ; i >= 0 ;i--)
+        text.push(ide.CodeExplorer.Thumbnails[i].id+"\r\n");
     
     return text;
 }
@@ -149,13 +122,26 @@ function SaveMap()
     saveAs(blob, new Date().getTime().toString()+".map");
     prompt.AddEventText("saving .map")
 }
-function LoadMapFromFile(text)
+function TryParseLine(line)
+{
+    if ( line.split(" ").length > 1 )
+        return line;
+    var parsed = parseInt(line);
+    if (!isNaN(parsed))
+        return parsed;
+    parsed = parseFloat(line);
+    if (!isNaN(parsed))
+        return parsed;
+    return line;
+}
+function LoadMapFromFile(text,canvas)
 {
     // Clear Array, thumbnails, IDE
     if ( !importing )
     {
         Blocks = new Array();
-        CloseAllWindows();
+        Editor.CloseAllWindows();
+        Documentation.Close();
     }
         
     // Load
@@ -164,7 +150,7 @@ function LoadMapFromFile(text)
     var linectr = 1;
     for (i = 0 ; i < winlength; i++ )
     {
-        AddNewWindow(text[linectr]);
+        Editor.AddNewWindow(text[linectr]);
         linectr++;
     } 
    
@@ -178,7 +164,7 @@ function LoadMapFromFile(text)
         var win = text[linectr];linectr++;
         var x= parseInt(text[linectr]);linectr++;
         var y = parseInt(text[linectr]);linectr++;
-        var newblock = new Block(typename, win, EditorCanvas);
+        var newblock = new Block(typename, win, canvas);
         
         // set ports after all blocks creation i guess ?
         var numoutputslots = parseInt(text[linectr]);linectr++;
@@ -205,16 +191,19 @@ function LoadMapFromFile(text)
         newblock.id = id;
         newblock.SetPosition(x,y);
         newblock.LoadFromTypeName(true);
+        // <-- block data can change here 
         
         // @ Set memory if needed ...
         var mementriescount =  parseInt(text[linectr]);linectr++;
         if (mementriescount > 0 )
         {
+            var b = GetBlockByID(id);
             var nummem = 0;
             for (nummem = 0; nummem < mementriescount; nummem++)
             {
-                // do some floatparse
-                newblock.memory[nummem] = parseFloat(text[linectr]); linectr++;
+                // This is writing to block memory but well not realling writing it ...
+           
+                b.memory[nummem] = TryParseLine(text[linectr]); linectr++;
             }
         }
         
@@ -261,20 +250,22 @@ function LoadMapFromFile(text)
         var mementriescount =  parseInt(text[linectr]);linectr++;
         linectr+=mementriescount;
     }
-    
+   
     // @ Open Windows
     var winlength = parseInt(text[linectr]);linectr++;
     for (i = 0; i < winlength; i++ )
     {
-        AddNewWindow(text[linectr]); linectr++;
+        Editor.AddNewWindow(text[linectr]); linectr++;
     }
     // @ Open thumb
     var thumblength = parseInt(text[linectr]);linectr++;
     for (i = 0; i < thumblength; i++ )
     {
         var b = GetBlockByID(parseInt(text[linectr])); linectr++;
-        ideThumbnails.AddThumbnail(b);
+        if ( b != null)
+            ide.TryLoadBlock(b);
     }
+     LoadBang(); 
     RecomputeMapIndex();
     prompt.AddEventText(".map successfully loaded")
 
@@ -293,11 +284,11 @@ function SaveProject()
     prompt.AddEventText("saving project")
    
 }
-function LoadProjectFromFile(text)
+function LoadProjectFromFile(text, canvas)
 {
     var lineend = LoadLibraryFromTextFile(text); 
     // slice text
     var map = text.slice(lineend);
-    LoadMapFromFile(map);
-    BangAtLoad(); 
+    LoadMapFromFile(map,canvas);
+    LoadBang(); 
 }

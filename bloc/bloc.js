@@ -1,11 +1,17 @@
-/*
-    TODO
-    -> Better Logic on O()
-    -> Double Click Logic
-    -> ALU/LOGIC token detection when renaming
-*/
+
 
 // @ Wire Data
+
+class WiringInfo
+{
+    constructor(blocid = -1, comNumber = 0, fromInput = false)
+    {
+        this.blocId = blocid;
+        this.comPort = comNumber;
+        this.fromInput = fromInput;
+    }
+}
+
 class WireInData
 {
     constructor(blocID = 0, comPort = 0)
@@ -42,17 +48,24 @@ class Block
         this.Window = window;
         
         // Code
-        this.NativeScript = new Array();
+        this.NativeScript = [""];
         this.memory = new Array(); // internal memory 
         this.declar = ""; // code called only at reset 
-        this.method = "";  // code contained by this block as a string. Using reflection. 
+        this.methods = [""];  // code contained by this block as a string. Using reflection. 
         
         // IO
         this.inputslots = new Array();  // Array of size (inputnumber) containing array of int (id of blocks) 
         this.outputslots = new Array(); // Array of size (outputnumber) containing array of int (id of blocks)
         
-        console.log("New block created!!!!");
+        this.wiringData = null;
+        // Virtual function for special blocks + override...
+        this.OnCreate();
         
+    }
+    
+    OnCreate()
+    {
+         console.log("New block created : " + this.typename);
     }
   
     Destroy()
@@ -65,21 +78,12 @@ class Block
             this.ClearInputPort(i);
         for(i=0;i<outcount;i++)
             this.ClearOutputPort(i);
-        // @ Try remove opened thumbnail 
-        // ->-<-<->-<->-<->-<->-< : this one make things buggy ....
-        var indexthumb = ideThumbnails.Thumbnails.indexOf(this);
-        if  ( indexthumb > -1 )
-            ideThumbnails.Thumbnails.splice(indexthumb,1);
-        ideThumbnails.Draw();
-        // @Update also IDE
-        if ( ide.BlockID == this.id)
-        {
-            ide.BlockID = 0;
-            ide.Text = "";
-            ide.DrawScriptText();
-        }
+        
+        // @ Try remove bloc from editor
+        ide.TryCloseBlock(this)
+        
         // Unset Interaction (we can only destroy while renaming so lets just do if renamed )
-        currentTyping = -1;
+        UserIsTyping = false;
         // Splice this elements from Blocks
         var index = Blocks.indexOf(this);
         if  (index > -1 )
@@ -109,7 +113,7 @@ class Block
             for ( i = 0; i<dff;i++)
                 this.inputslots.push(new Array()); 
         
-        return;    
+            return;    
         }
         if (dff < 0)
         {
@@ -144,6 +148,24 @@ class Block
     }
     SetMemorySize(size)
     {
+
+        var dff = size - this.memory.length; 
+        if (dff > 0)
+        {
+            var i;
+            for ( i = 0; i<dff;i++)
+                this.memory.push(0); 
+        
+            return;    
+        }
+        if (dff < 0)
+        {
+            this.memory.splice(count);
+            return;
+        }
+        
+        return;
+        
         this.memory = new Array();
         var i;
         for (i =0 ; i< size;i++ )
@@ -151,6 +173,8 @@ class Block
     }
     AddWireOut(PortNumber, destId, destCOM)
     {
+        if ( this.outputslots.length <= PortNumber)
+            return;
         this.outputslots[PortNumber].push(new WireOutData(destId, destCOM));
         var destbloc = GetBlockByID(destId);
         destbloc.AddWireIn(destCOM, this.id, PortNumber );
@@ -158,7 +182,8 @@ class Block
     // @ Called by AddWireOut
     AddWireIn(PortNumber, destId, destCOM)
     {
-        
+        if ( this.inputslots.length <= PortNumber)
+            return;
         this.inputslots[PortNumber].push(new WireInData(destId, destCOM));
     }
     // Can be usefull
@@ -222,7 +247,8 @@ class Block
  
     ForceCompile()
     {
-        TryLoadBlockFromLibraryEntries(this);
+        InterpreteBlockCode(this); 
+        this.R();
     }
     
     SetPosition(x,y)
@@ -230,18 +256,18 @@ class Block
         this.bodyBox.x = x;
         this.bodyBox.y = y;
     }
-    
+   
     // Graphic
     Draw()
     {
-        if ( currentTyping != this.id)
-        {
-            if ( TryDrawSpecial(this))
-            return;
-        }
+        this.DefaultDraw();
         
+    }
+    DefaultDraw()
+    {
+      
         // Compute Width and Port distance
-        var w = this.typename.length * 9;
+        var w = this.typename.length * VisualParameters.BlockFontWidth; 
         if ( w < 25 )
         {
             w = 40 ;
@@ -252,7 +278,7 @@ class Block
         }
         
         var segwidth = w /maxSlot ;
-        if ( segwidth < 10 *1.5){
+        if ( segwidth < 10 * 1.5){
             // recompute w 
             segwidth = 10 * 1.5;
             w = maxSlot *segwidth;
@@ -267,16 +293,18 @@ class Block
         this.DrawBody()
         
         // @ Draw IOs
-        this.DrawIOs(iostartpos,segwidth,this.inputslots.length, this.outputslots.length )
+        this.DrawI(iostartpos,segwidth,this.inputslots.length)
+        this.DrawO(iostartpos,segwidth,this.outputslots.length)
+        //this.DrawIOs(iostartpos,segwidth,this.inputslots.length, this.outputslots.length )
         
         // @ Print text
         var _g = this.displayCanvas.context;
-        _g.fillStyle = 'rgb(0,0,0)';
-        if (currentTyping == this.id )
+        _g.fillStyle = VisualParameters.BlockStrokeColor;
+        if (this.renaming)
         {
-            _g.fillStyle = 'rgb(255,255,255)';
+            _g.fillStyle = VisualParameters.BlockFillColor;
         }
-        _g.font = "16px Autopia";
+        _g.font = VisualParameters.BlockFont;
         _g.fillText(this.typename,this.bodyBox.x,this.bodyBox.y+16 );
         
         // @ Draw Wires
@@ -289,68 +317,71 @@ class Block
         var _g = this.displayCanvas.context;
         // @ Draw Box
         // Plain color
-        _g.fillStyle = 'rgb(255,255,255)';
-        if (currentTyping == this.id )
+        _g.fillStyle = VisualParameters.BlockFillColor;
+        if (this.renaming)
         {
-            _g.fillStyle = 'rgb(0,0,255)';
+            _g.fillStyle = VisualParameters.BlockHighLightColor;
         }
         _g.fillRect(this.bodyBox.x,this.bodyBox.y,this.bodyBox.w,this.bodyBox.h);
         
         // Outline
-        _g.lineWidth = 3;
-        _g.strokeStyle = 'rgb(0,0,0)';
-        if (currentTyping == this.id )
+        _g.lineWidth = VisualParameters.BlockBorderWidth;
+        _g.strokeStyle = VisualParameters.BlockStrokeColor;
+        if (this.renaming )
         {
-            _g.strokeStyle = 'rgb(255,255,255)';
+            _g.strokeStyle = VisualParameters.BlockFillColor;
         }
         if (IsMouseInsideBox(this.bodyBox,this.displayCanvas) || this.CurrentlyInteract() )
         {
-            _g.strokeStyle = 'rgb(0,0,255)';
-            EditorInfo = GetDocOfNativeScriptFromToken(this.NativeScript, "#df");
+            _g.strokeStyle = VisualParameters.BlockHighLightColor;
+            Editor.Info = GetDocOfNativeScriptFromToken(this.NativeScript, "#df");
         }
         // if this is in library 
         _g.strokeRect(this.bodyBox.x,this.bodyBox.y,this.bodyBox.w,this.bodyBox.h);
     }
     // Generic Draw IOs functions...
-    DrawIOs( iostartpos, segwidth, inpcount, ouptcount )
+    DrawI(iostartpos, segwidth, inpcount)
     {
         var _g = this.displayCanvas.context;
         var i;
         var px = iostartpos;
-        if (!IsBlockWarpin(this))
+        for ( i = 0 ; i < inpcount; i++ )
         {
-            for ( i = 0 ; i < inpcount; i++ )
-            {
-                _g.fillStyle = 'rgb(0,0,0)';
-                this.inputsboxes[i].x = px; 
-                this.inputsboxes[i].y = this.bodyBox.y - this.inputsboxes[i].h;
-                if (IsMouseInsideBox(this.inputsboxes[i],this.displayCanvas) ){
-                    _g.fillStyle = 'rgb(255,0,0)';
-                    EditorInfo = GetDocOfNativeScriptFromToken(this.NativeScript, "#i"+i);
-                }
-                _g.fillRect(px , this.inputsboxes[i].y, this.inputsboxes[i].w,this.inputsboxes[i].h);
-                px += segwidth;
+            _g.fillStyle = VisualParameters.BlockStrokeColor;
+            this.inputsboxes[i].x = px; 
+            this.inputsboxes[i].y = this.bodyBox.y - this.inputsboxes[i].h;
+            if (IsMouseInsideBox(this.inputsboxes[i],this.displayCanvas) ){
+                _g.fillStyle = VisualParameters.BlockHighLightColor;
+                Editor.Info = GetDocOfNativeScriptFromToken(this.NativeScript, "#i"+i);
             }
+            _g.fillRect(px , this.inputsboxes[i].y, this.inputsboxes[i].w,this.inputsboxes[i].h);
+            px += segwidth;
         }
-        // @ Draw Outputs
-        if (!IsBlockWarpout(this))
+    }
+    DrawO(iostartpos, segwidth, ouptcount)
+    {
+        var _g = this.displayCanvas.context;
+        var i;
+        var px = iostartpos;
+        for ( i = 0 ; i < ouptcount; i++ )
         {
-            px = iostartpos;
-            for ( i = 0 ; i < ouptcount; i++ )
-            {
-                _g.fillStyle = 'rgb(0,0,0)';
+            _g.fillStyle = VisualParameters.BlockStrokeColor;
            
-                this.outputsboxes[i].x = px; 
-                this.outputsboxes[i].y = this.bodyBox.y + this.bodyBox.h;
-                if (IsMouseInsideBox(this.outputsboxes[i],this.displayCanvas) ){
-                    _g.fillStyle = 'rgb(255,0,0)';
-                    EditorInfo = GetDocOfNativeScriptFromToken(this.NativeScript, "#o"+i);
-                }
-                _g.fillRect(px , this.outputsboxes[i].y, this.outputsboxes[i].w,this.outputsboxes[i].h);
-                px += segwidth;
+            this.outputsboxes[i].x = px; 
+            this.outputsboxes[i].y = this.bodyBox.y + this.bodyBox.h;
+            if (IsMouseInsideBox(this.outputsboxes[i],this.displayCanvas) ){
+                _g.fillStyle = VisualParameters.BlockHighLightColor;
+                 Editor.Info = GetDocOfNativeScriptFromToken(this.NativeScript, "#o"+i);
             }
+            _g.fillRect(px , this.outputsboxes[i].y, this.outputsboxes[i].w,this.outputsboxes[i].h);
+            px += segwidth;
         }
-        
+    }
+    
+    DrawIOs( iostartpos, segwidth, inpcount, ouptcount )
+    {
+        DrawI(iostartpos,segwidth,inpcount)
+        DrawO(iostartpos,segwidth,ouptcount)
     }
     
     DrawWires()
@@ -358,34 +389,29 @@ class Block
          var _g = this.displayCanvas.context;
         // @ Draw wires
         var i;
-        if (!IsBlockWarpout(this))
+        for (i = 0 ; i < this.outputslots.length; i++)
         {
-              for (i = 0 ; i < this.outputslots.length; i++)
-                {
-                    var n = 0; 
-                    for (n = 0; n < this.outputslots[i].length; n++)
-                    {
-                        _g.strokeStyle = "rgba(0,0,0)"; 
-                        _g.lineWidth = 1;
-                        _g.beginPath();
-                        _g.moveTo(
-                            this.outputsboxes[i].x + this.outputsboxes[i].w / 2 ,
-                            this.outputsboxes[i].y + this.outputsboxes[i].h / 2
-                                );
-                    var destbloc = GetBlockByID(this.outputslots[i][n].blocId);
-                    _g.lineTo(
-                            destbloc.inputsboxes[this.outputslots[i][n].comPort].x + 
-                            destbloc.inputsboxes[this.outputslots[i][n].comPort].w /2,
-                            destbloc.inputsboxes[this.outputslots[i][n].comPort].y + 
-                            destbloc.inputsboxes[this.outputslots[i][n].comPort].h /2,
-                            );
-                    _g.closePath();
-                    _g.stroke();
-                }
-            }
-        
-        }
-      
+            var n = 0; 
+            for (n = 0; n < this.outputslots[i].length; n++)
+            {
+                _g.strokeStyle = VisualParameters.WireColor; 
+                _g.lineWidth = VisualParameters.WireWidth;
+                _g.beginPath();
+                _g.moveTo(
+                    this.outputsboxes[i].x + this.outputsboxes[i].w / 2 ,
+                    this.outputsboxes[i].y + this.outputsboxes[i].h / 2
+                        );
+            var destbloc = GetBlockByID(this.outputslots[i][n].blocId);
+            _g.lineTo(
+                destbloc.inputsboxes[this.outputslots[i][n].comPort].x + 
+                destbloc.inputsboxes[this.outputslots[i][n].comPort].w /2,
+                destbloc.inputsboxes[this.outputslots[i][n].comPort].y + 
+                destbloc.inputsboxes[this.outputslots[i][n].comPort].h /2,
+                );
+            _g.closePath();
+            _g.stroke();
+           }
+      }
     }
     
     
@@ -403,12 +429,19 @@ class Block
         if (portnumber == 0)
         {
             this.OIO();
+            return;
+        }
+        // ipf mechanism
+        if ( this.methods.length > portnumber)
+        {
+            var s = this.methods[portnumber].split("?").join("Blocks["+this.index+"]");
+            eval("(async () => {"+s+"})()");
         }
            
     }
     OIO()
     {
-        var s = this.method.split("?").join("Blocks["+this.index+"]");
+        var s = this.methods[0].split("?").join("Blocks["+this.index+"]");
         eval("(async () => {"+s+"})()");
     }
     O(portnumber,memindex)
@@ -424,41 +457,21 @@ class Block
                 this.outputslots[portnumber][i].comPort, this.memory[memindex]
             );
         }
-        
-        // Special bang graphics
-        if ( this.typename == "bang" && this.Window == windowThumbnails.Thumbnails[0])
-        {
-            //@ Draw circle
-            var _g = this.displayCanvas.context;
-            var centerX = this.bodyBox.x + this.bodyBox.w / 2;
-            var centerY = this.bodyBox.y + this.bodyBox.h / 2;
-            _g.beginPath();
-            _g.arc(centerX, centerY, 30, 0, 2* Math.PI, false);
-            _g.fillStyle =  'rgb(0,0,255)';
-            _g.fill();
-            _g.closePath();
-        }
     }
     
     // User Interaction
     CurrentlyInteract()
     {
-
-        if ( currentGrab != null )
+        // return true if isgrabbed or iswiring
+        if ( this.wiringData != null || this.grabbed == true)
         {
-            if ( currentGrab.Id == this.id )
-                return true;
+            return true;
         }
-        return linkedData.blocId == this.id;
+        return false;
     }
+    // Should be changed either
     Interact()
     {
-        if ( currentTyping != this.id)
-        {
-            if ( TryInteractSpecial(this))
-                return;
-        }
-        
         this.DefaultInteract();
     }
      
@@ -472,34 +485,28 @@ class Block
     }
     CheckInteraction()
     {
-        if ( currentTyping == this.id)
+        if ( this.renaming)
+            return true;
+        
+        if ( this.grabbed)
         {
+            this.ProccessGrabbing(); 
             return true;
         }
-        if ( currentGrab != null)
-        {
-             if ( currentGrab.Id == this.id)
-            {
-                this.ProccessGrabbing(); 
-                return true;
-            }
-        }
-       
-        if ( linkedData.blocId == this.id)
+        if ( this.wiringData != null )
         {
             this.ProccessLinking(); 
             return true;
         }
-        if (!this.displayCanvas.mousepressed)
+       
+        if (!mousepressed)
             return true;
         
         
-        if (UserIsInteracting())
+        if (UserIsGrabbing||UserIsTyping|| UserIsWiring)
         {
             return true; 
         }
-           
-        
         return false;
     }
     
@@ -510,14 +517,15 @@ class Block
         {
             if (IsMouseInsideBox(this.inputsboxes[i], this.displayCanvas))
             {
-                 if ( this.displayCanvas.hasdoubleclicked )
+                 if ( Editor.hasdoubleclicked )
                  {
-                      // @ Destroy grabbed data... it can leave on the block
-                    currentGrab = null;
+                    this.grabbed = false; 
+                    UserIsGrabbing = false;
                     this.ClearInputPort(i);
                     return;
                  }
-                 linkedData = new WiringInfo(this.id, i, true);
+                 this.wiringData = new WiringInfo(this.id, i, true);
+                 UserIsWiring = true;
                  return;
             }
         }
@@ -525,14 +533,15 @@ class Block
         {
             if (IsMouseInsideBox(this.outputsboxes[i],this.displayCanvas))
             {
-                if ( this.displayCanvas.hasdoubleclicked )
+                if ( Editor.hasdoubleclicked )
                 {
-                     // @ Destroy grabbed data... it can leave on the block
-                    currentGrab = null;
+                    this.grabbed = false;  
+                    UserIsGrabbing = false;
                     this.ClearOutputPort(i);
                     return;
                 }
-                linkedData = new WiringInfo(this.id, i, false);
+                this.wiringData = new WiringInfo(this.id, i, false);
+                UserIsWiring = true;
                 return;
             }
         }      
@@ -541,30 +550,52 @@ class Block
             return;
         
         // @ Update Code Editor 
-        ideThumbnails.AddThumbnail(this);
-        ide.UpdateEditor(this.id);
+        ide.TryLoadBlock(this)
         
-        if ( this.displayCanvas.hasdoubleclicked == true )
+        if ( Editor.hasdoubleclicked == true && !UserIsTyping)
         {
             // @ Destroy grabbed data... it can leave on the block
-            currentGrab = null;
-            currentTyping = this.id;
+            this.grabbed = false;
+            UserIsGrabbing = false;
+            this.renaming = true;
+            UserIsTyping = true;
             this.backupName = this.typename;
             this.typename = "";
             return;
         }
         
         // @ Do Grabbing
-        currentGrab = new Grab(this.id, new Vector2(mouseX-this.bodyBox.x, mouseY - this.bodyBox.y));
+        this.GrabOrigin = new Vector2(mouseX-this.bodyBox.x, mouseY - this.bodyBox.y);
+        this.grabbed = true;
+        UserIsGrabbing = true;
     }
    
     // @ This can cause error when loading with [in ] [out ] creation
     LoadFromTypeName(fromfile = false) // @ does it every run ?
     {
-        // @ Check if name is empty. if true, reload ancient name 
+         // @ Check if name is empty. do nothing & restore ancient typename variable.
         if ( this.typename.length == 0) 
         {
             this.typename = this.backupName; 
+            return;
+        }
+        
+        // @ Check if name correspond to an extension block? if true
+        //   copy data of this block to  the new one. Then compile the block and return.
+        var extblock = TryLoadExtensionBlock(this);
+        if ( extblock != null )
+        {
+     
+            // Set extblock at this position in Blocks array.
+            Blocks[this.index] = extblock;
+            // Copy index.
+            extblock.index = this.index;
+            // Compile
+            TryLoadBlockFromLibraryEntries(extblock);
+            CopyBlockData(extblock, this); // if we copy for predefined block this is not working
+            extblock.ForceCompile();
+            ide.TryLoadBlock(extblock);
+            // Let time to garbage collector to free this class from memory.
             return;
         }
         // @ Is predefined arith block?
@@ -578,6 +609,7 @@ class Block
             var value =this.typename.substr(token.length, this.typename.length-token.length);
             // Load from script from token
             this.typename = token;
+            TryLoadBlockFromLibraryEntries(this);
             this.ForceCompile();
             // Hide input 1 & set memory
             this.typename = originalname;
@@ -585,115 +617,29 @@ class Block
             this.SetMemorySize(2);
             this.memory[1] = parseFloat(value);
             return;
-            
         }
-        if ( fromfile)
-        {
-            this.ForceCompile();  
-            return;
-        }
-        // @ Detect warp Out
-         var outi = this.typename.indexOf("out ");
-         if ( outi == 0)
-         {
-            var typename = this.typename.substr(4,this.typename.length-4);
-            // @ Generated outscript
-            var outscript = new Array();
-            outscript.push("# AutoGenerated Code for Warping");
-            outscript.push("# @ Logic for [OUT $] block");
-            outscript.push("--decl");
-            outscript.push("inp(1)"); // Do not draw for Input
-            outscript.push("outp(1)");
-            outscript.push("memset(1)");
-            outscript.push("--code");
-            outscript.push("out0(0)");
-            this.NativeScript = outscript;
-            ide.Text = outscript;
-            ide.DrawScriptText();
-            ide.hasUpdated = true;
-            OnCodeUpdate();
-                
-            // we can eventually get all all blocks 
-            var inblocs = GetAllBlocksByTypeName("in "+typename);
-            if (inblocs.length == 0 )
-            {
-                //AddNewWindow("win"+GetWindowsCount().toString());
-                AddNewWindow(GetEmptyWindow());
-                //@ Create the inblock
-                var inbloc = CreateSpecificBlock("in "+typename, this.displayCanvas.box.w/2,this.displayCanvas.box.h/2 );
-                //@ Set a generic nativescript
-                var genscript = new Array();
-                genscript.push("# AutoGenerated Code for Warping");
-                genscript.push("# @ Logic for [IN $] block");
-                genscript.push("--decl");
-                genscript.push("inp(1)"); // Do not draw for Input
-                genscript.push("outp(1)");
-                genscript.push("memset(1)");
-                genscript.push("--code");
-                genscript.push("out0(0)");
-                inbloc.NativeScript = genscript;
-                ide.Text = genscript;
-                ide.DrawScriptText();
-                ide.hasUpdated = true;
-                OnCodeUpdate();
-                inblocs.push(inbloc);
-                    
-            }
-            //@ Link output to all in blocks
-            var i; 
-            for (i=0;i<inblocs.length;i++)
-            {
-                this.AddWireOut(0, inblocs[i].id, 0);
-            }
-                
-        }
-        
-        // @ Detect warp In
-        var ini = this.typename.indexOf("in ");
-        if (ini == 0 )
-        {
-            var typename = this.typename.substr(3,this.typename.length-3);
-            // @ Generated inputscript
-            var genscript = new Array();
-            genscript.push("# AutoGenerated Code for Warping");
-            genscript.push("# @ Logic for [IN $] block");
-            genscript.push("--decl");
-            genscript.push("inp(1)"); // Do not draw for Input
-            genscript.push("outp(1)");
-            genscript.push("memset(1)");
-            genscript.push("--code");
-            genscript.push("out0(0)");
-            this.NativeScript = genscript;
-            ide.UpdateEditor(this.id);
-            ide.Text = genscript;
-            ide.DrawScriptText();
-            ide.hasUpdated = true;
-            OnCodeUpdate();
-                
-            var outblocs = GetAllBlocksByTypeName("out "+typename);
-            for (i=0;i<outblocs.length;i++)
-            {
-                outblocs[i].AddWireOut(0, this.id, 0);
-            }
-                
-        }
+        TryLoadBlockFromLibraryEntries(this);
+        ide.TryLoadBlock(this);
         this.ForceCompile();
     }
     
     ProccessRenaming(e)
     {
+        
         if ( e.keyCode == 46 ) //@ key suppr was pressed  
         {
             this.Destroy();
+            UserIsTyping = false;
             return; 
         }
+        
        if ( e.keyCode == 13 ) // @ key enter was pressed 
         {
            
             // Reload
+            this.renaming = false;
+            UserIsTyping = false;
             this.LoadFromTypeName();
-            // @ Set renaming false
-            currentTyping = -1;
             return;
         }
         if (  e.keyCode == 8 )
@@ -711,33 +657,34 @@ class Block
     }
     ProccessGrabbing()
     {
-        if (!this.displayCanvas.mousepressed)
+        if (!mousepressed)
         {
-            currentGrab = null;
+            this.grabbed = false;
+            UserIsGrabbing = false;
             return;
         }
-        this.bodyBox.x = mouseX-currentGrab.Offset.x; 
-        this.bodyBox.y = mouseY-currentGrab.Offset.y;
+        this.bodyBox.x = mouseX-this.GrabOrigin.x; 
+        this.bodyBox.y = mouseY-this.GrabOrigin.y;
     }
     ProccessLinking()
     {
-        if (!this.displayCanvas.mousepressed )//|| !ctrlPressed)
+        var r = Editor.GetValidIOAtPosition(this.wiringData);
+        if (!mousepressed )
         {
             // Get IO
-            var r = GetValidIOAtPosition();
             if (r != false )
             {
-                if (linkedData.fromInput)
+                if (this.wiringData.fromInput)
                 {
-                    Blocks[r[0]].AddWireOut(r[1],this.id,linkedData.comPort);
+                    Blocks[r[0]].AddWireOut(r[1],this.id,this.wiringData.comPort);
                 }
                 else
                 {
-                    this.AddWireOut(linkedData.comPort, Blocks[r[0]].id,r[1]); //@ OK
+                    this.AddWireOut(this.wiringData.comPort, Blocks[r[0]].id,r[1]); //@ OK
                 }
             }
-            // @ Update input or output ...
-            linkedData = new WiringInfo();
+            this.wiringData = null;
+            UserIsWiring = false;
             return;
         }
         //  @ Draw line from this position to mouse Position
@@ -745,19 +692,19 @@ class Block
         _g.strokeStyle = "rgba(0,0,0)"; 
         _g.lineWidth = 1;
         _g.beginPath();
-        if (linkedData.fromInput)
+        if (this.wiringData.fromInput)
         {
-            _g.moveTo(this.inputsboxes[linkedData.comPort].x +this.inputsboxes[linkedData.comPort].w/2 ,this.inputsboxes[linkedData.comPort].y+this.inputsboxes[linkedData.comPort].h/2);
+            _g.moveTo(this.inputsboxes[this.wiringData.comPort].x +this.inputsboxes[this.wiringData.comPort].w/2 ,this.inputsboxes[this.wiringData.comPort].y+this.inputsboxes[this.wiringData.comPort].h/2);
         }
         else
         {
-             _g.moveTo(this.outputsboxes[linkedData.comPort].x +this.outputsboxes[linkedData.comPort].w/2 ,this.outputsboxes[linkedData.comPort].y+this.outputsboxes[linkedData.comPort].h/2);
+             _g.moveTo(this.outputsboxes[this.wiringData.comPort].x +this.outputsboxes[this.wiringData.comPort].w/2 ,this.outputsboxes[this.wiringData.comPort].y+this.outputsboxes[this.wiringData.comPort].h/2);
         }
         // Magnet closed Boxes  
         _g.lineTo(mouseX-this.displayCanvas.box.x, mouseY-this.displayCanvas.box.y);
         _g.closePath();
         
-        if (GetValidIOAtPosition() != false)
+        if (r != false)
         {
             _g.strokeStyle = "rgba(0,0,255)"; 
         }
@@ -767,6 +714,9 @@ class Block
     }
     
 }
+
+// some visual parameters for blocks : wire color, wire width, font, fontcolor, fontsize, fontwidth, body width, body color ... etc.
+
 
 var Blocks = new Array();
 
@@ -842,13 +792,11 @@ function CreateNewBlock()
 {
     console.log("Creating new block");
     // Create block & Compile
-    var newblock = new Block(" new ", windowThumbnails.Thumbnails[0], EditorCanvas);
+    var newblock = new Block(" new ", Editor.WindowExplorer.Thumbnails[0], Editor.Canvas);
     Blocks.push(newblock);
     newblock.LoadFromTypeName();
-    
-    // Update UI
-    ideThumbnails.AddThumbnail(newblock);
-    ide.UpdateEditor(newblock.id);
+    ide.TryLoadBlock(newblock)
+
     return newblock;
     
 }
@@ -857,45 +805,47 @@ function CreateSpecificBlock(typename, x, y )
     console.log("Creating new block : " + typename + " at " + x + " " + y);
     
     // Create block & Compile
-    var newblock = new Block(typename, windowThumbnails.Thumbnails[0], EditorCanvas);
+    var newblock = new Block(typename, Editor.WindowExplorer.Thumbnails[0], Editor.Canvas);
     Blocks.push(newblock);
     newblock.LoadFromTypeName();
     newblock.SetPosition(x,y);
+    ide.TryLoadBlock(newblock)
     
-    // Update UI
-    ideThumbnails.AddThumbnail(newblock);
-    ide.UpdateEditor(newblock.id);
     return newblock;
 }
 
-//@ Experimental section
-//@ Return result as a string
-function TryCompileWindow(windowname)
+function CopyBlockData(dest,src)
 {
-    // @ Find entry called [in ]
-    var i;
-    var inblocks = new Array();
+    
+    dest.id = src.id; 
+    dest.index = src.index;
+    //dest.values = src.values;
+    dest.inputboxes = src.inputboxes;
+    dest.outputsboxes = src.outputsboxes;
+    dest.Window = src.Window; 
+    dest.inputslots = src.inputslots;
+    dest.outputslots = src.outputslots;
+    dest.bodyBox = src.bodyBox;
+    
+}
+
+
+// @ Function that Load Bang when needed
+function LoadBang()
+{
     for (i = 0 ; i < Blocks.length; i++ )
     {
-        if ( Blocks[i].typename.indexOf("in ") >= 0)
+        if ( Blocks[i].typename == "onload")
         {
-            inblocks.push(inblocks);
-            break;
+            // Run OIO to each object connected 
+            var n;
+            for (n = 0 ;  n < Blocks[i].outputslots[0].length; n++)
+            {
+                var b = GetBlockByID(Blocks[i].outputslots[0][n].blocId);
+                b.OIO();
+
+            }
         }
     }
-    if (inblocks.length == 0 ) 
-    {
-         return "COMPILING FAILED: No [in ] block found";
-    }
-    //@ Try Compiling entries 
-    for (i=0;i < inblocks.length;i++)
-    {
-      
-    }
-    return "[WINDOW COMPILING IS NOT FULLY IMPLEMENTED]";
-    
 }
-function TryCompileWindowFromInput(inputblock)
-{
-    
-}
+

@@ -2,7 +2,7 @@ function InterpreteBlockCode(block)
 {
    var r = InterpreteNative(block.NativeScript);
    block.declar = r[0];
-   block.method = r[1];
+   block.methods = r[1];
 }
 
 function InterpreteNative(nativescript)
@@ -15,10 +15,41 @@ function InterpreteNative(nativescript)
     
     declar = InterpreteRegion(declregion);
     method = InterpreteRegion(coderegion);
+        
+    var methods = GetIPFCodeRegions(nativescript);
+    if ( methods.length == 0)
+        methods.push(method);
+    else
+        methods[0] = method;
     
-    console.log(declar);
-    console.log(method);
-    return new Array(declar, method);
+    return new Array(declar, methods);
+}
+
+function GetIPFCodeRegions(nativescript)
+{
+    var r = new Array();
+    for (var i = 0; i < nativescript.length; i++ )
+    {
+        if ( nativescript[i].indexOf("--ipf") == 0)
+        {
+            var ipnum = parseInt(nativescript[i].replaceAll("--ipf",""));
+            var dff = ipnum - r.length;
+            if ( dff > 0)
+            {
+                for ( var n = 0 ; n < dff; n++)
+                    r.push("");
+            }
+            if ( dff < 0)
+                r.splice(ipnum);
+
+            // Get region
+            var rawreg = GetTextInsideLabel(nativescript[i], "--", nativescript);
+            var proc = ProccessPseudoRN(rawreg);
+            var code = InterpreteRegion(proc);
+            r[ipnum] = code;
+        }
+    }
+    return r;
 }
 
 function GetDeclarationRegion(nativescript)
