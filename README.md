@@ -62,7 +62,7 @@ Double clicking on the main screen will open a mini portable screen which can be
 
 https://user-images.githubusercontent.com/62741099/193688893-0c391145-5455-455b-b7a4-5341fa7a384d.mp4
 
-**an example of a polyphonic fm synth with 16-voices. 6 oscillators for each voices. Oscillators are wired following algorithm 8 routing of the yamaha dx7.**
+**An example of a polyphonic FM synth with 16-voices. 6 oscillators per voice. One ADSR enveloppe per oscillator**
 **This patch can be loaded in example>sound>dx7**
 
 
