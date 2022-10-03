@@ -14,7 +14,7 @@ You can test it [here](https://bleuprofond.art/tezgr/demo/)
 
 ## Logic
 
-workspace is divide in two main parts. Left side of the environment is an **output screen**, right side contains the **patch and code editors**.
+Workspace is divide in two main parts. Left side of the environment is an **output screen**, right side contains the **patch and code editors**.
 
 
 For those already familiar with **Pd**, this will not be a major shift : all work with **blocks**. Blocks are small items, set in a **patch** environment, that have **inputs and outputs, memory slots and embedded chunk of code**.
@@ -49,9 +49,6 @@ Here some of the most important shortkey/tips you should know before starting a 
 *  Hold **[control]** key to interact with specific block in edit mode (default mode).
 
 ## Outputs
-<p> 
-  <img src=git-content/draw.gif width="600" height="300"/>
-</p>
 
 **P-Graph can output graphics to any canvas**. 
 
@@ -62,6 +59,12 @@ will fill a rectangle, etc..
 Double clicking on the main screen will open a mini portable screen which can be more convenient to work with! 
 
 **It uses the Web Audio API**. Read audio documentation to get further. See [a dummy patch of a single-oscillator synth](https://raw.githubusercontent.com/gggraph/p-graph/main/git-content/synthseq.mp4)
+
+https://user-images.githubusercontent.com/62741099/193688893-0c391145-5455-455b-b7a4-5341fa7a384d.mp4
+
+**an example of a polyphonic fm synth with 16-voices. 6 oscillators for each voices. Oscillators are wired following algorithm 8 routing of the yamaha dx7.**
+**This patch can be loaded in example>sound>dx7**
+
 
 ## Code editor
 <p>
