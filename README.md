@@ -72,9 +72,13 @@ https://user-images.githubusercontent.com/62741099/194303052-c7405d6f-fd4e-4b53-
 **This patch can be loaded in example>visual>3D**
 
 ## Code editor
+
 <p>
-  <img src=git-content/helloworld.gif width="400" height="600"/>
-</p>  
+  <img src=git-content/testa.gif width="200" height="320" />
+  <img src=git-content/testc.gif width="200" height="320" />
+   <img src=git-content/testb.gif width="200" height="320" />
+    <img src=git-content/testd.gif width="200" height="320" />
+</p>
 
 One of the strong part of P-Graph is its **ability to evaluate and run block's code on the fly** since it's written in javascript. Even if javascript is less efficient than C/C++ code, we can get rid of pointers and memory management. It makes the P-Graph structure a lot more readable and opened to direct modification.
 
