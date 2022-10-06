@@ -58,7 +58,7 @@ Here some of the most important shortkey/tips you should know before starting a 
 https://user-images.githubusercontent.com/62741099/193688893-0c391145-5455-455b-b7a4-5341fa7a384d.mp4
 
 **An example of a polyphonic FM synth with 16-voices. 6 oscillators per voice. One ADSR enveloppe per oscillator**
-**This patch can be loaded in example>sound>dx7**
+**This patch can be loaded in file>example>sound>fm synth**
 
 ### Visual
 
@@ -69,7 +69,7 @@ will stroke a rectangle, etc..
 https://user-images.githubusercontent.com/62741099/194303052-c7405d6f-fd4e-4b53-9f0c-63b9fc24d754.mp4
 
 **An example of a simple 3D viewer which render Stanford tea pot .obj using vector mathematics in a customizable render pipe line.**
-**This patch can be loaded in example>visual>3D**
+**This patch can be loaded in file>example>visual>3D**
 
 ## Code editor
 
