@@ -14,19 +14,18 @@ You can test it [here](https://bleuprofond.art/tezgr/demo/)
 
 ## Logic
 
-Workspace is divide in two main parts. Left side of the environment is an **output screen**, right side contains the **patch and code editors**.
+Workspace is splitted in two main parts. Left side of the environment is an **output screen**, right side contains the **patch and code editors**.
 
 
-For those already familiar with **Pd**, this will not be a major shift : all work with **blocks**. Blocks are small items, set in a **patch** environment, that have **inputs and outputs, memory slots and embedded chunk of code**.
+For those already familiar with **Pd**, this will not be a major shift : all work with **blocks**. Blocks are small items inside a **patch** environment, that have **inputs, outputs and an internal memory**.
 
-Any input can be wired to any output. Any output can be wired to any input. When inputs of a block receiving data, the block run its internal code,
-eventually modifying the data, then output it and the propagation continue. 
+Any input can be wired to any output. Any output can be wired to any input. When a block's input receiving data, the block run its internal code that will
+eventually modify the data, then output the result and the propagation continue. 
 
 In most configuration, only the **first input trigger the block's code**, so, in most case, to propagate data, blocks ' outputs should be wired to other blocks' first input.
 
-Any block has a specific number of memory slots (an array of data). When block receiving data from one input, it loads that data to a given memory slot:
-for example, when **receiving value into second input, data is stored to second memory slot** and so on. Blocks can output to any of its output slots the value 
-of any of its memory slots.
+Any block has a specific number of memory slots (an array of data). When block receiving data from one input, it store the data within its memory:
+for example, when **receiving value into second input, data is stored to second memory slot** and so on. Blocks can output value of any of its memory slots.
 
 To get familiar with **P-Graph** system, you should load example projects and get a first look on the library documentation.
 
