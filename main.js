@@ -113,7 +113,6 @@ var VisualParameters;
 
 async function Boot()
 {
-
     // @ Load stuff
     LoadFont();
 
@@ -148,21 +147,21 @@ async function Boot()
     
     // @ Set default ratio
     ResizeScreenEditorRatio(window.innerWidth/2);
-   
+
     // Web 3
     InitEthereumNetwork();
     InitTezosNetwork();
-    SwitchToTezosNetwork("ithacanet");
+    SwitchToTezosNetwork("jakartanet");
     
+
     await LoadUpdatedLib();
-      //@ Load Default Project
-    await LoadExampleProject("midi synth demo");
-   
+    //@ Load Default Project
+    await LoadExampleProject("visual/simple drawer.map");
+     // OpenLibrary
+    Documentation.Open("vanilla.lib");
+    
     // Set PlayMode
     Editor.inPlayMode = false;
-    
-    // OpenLibrary
-    Documentation.Open();
     
     //@ Start core loop
     setInterval(RunSystem, 10);
@@ -214,21 +213,24 @@ function RunSystem()
     
    if ( miniScreenCanvas.Opened)
        RunMiniScreen();
-   //    UpdateMiniScreenPositionAndDimension();
-    // @ Display/Run Editor
-    Editor.Run();
-    
-    // @ Display Lib if doc opened 
+   
+     // @ Display Lib if doc opened 
    if ( Documentation.Opened)
    {
        Documentation.Run();
    }
+     // @ Display/Run Editor
+    Editor.Run();
+    
+   
 }
 
 function ResizeScreenEditorRatio(screenwidth)
 {
+    var cehide = ide.hide;
+    if ( ide.hide)
+        ide.UnHide();
     VisualParameters.SetDefaultProportionFromScreenDimension();
-    
     ToolBar.SetDImension(new Box(0,0,screenwidth, VisualParameters.ToolBarHeight));
     // @ Resizing Screen
     ScreenCanvas.box = new Box(0,ToolBar.Canvas.box.h,ToolBar.Canvas.box.w, window.innerHeight - ToolBar.Canvas.box.h - 20);
@@ -251,7 +253,8 @@ function ResizeScreenEditorRatio(screenwidth)
     prompt.Canvas.SetPositionAndDimension();
     
     // @recompute bouton relative if library opened 
-    
+    if ( cehide ) 
+        ide.Hide();
     if ( Documentation.Opened)
         Documentation.ComputeYScrollingRatio();
 }

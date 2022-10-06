@@ -76,6 +76,12 @@ function IsVectorInsideBox(v,b, canvas)
     if ( v.x >= b.x && v.x <= b.x+b.w && v.y >= b.y && v.y <= b.y+b.h) {return true;}
     return false;
 }
+function IsBoxInsideBox(b1,b2)
+{
+    if ( b1.x + b1.w >= b2.x && b2.x + b2.w >= b1.x && b1.y + b1.h >= b2.y && b2.y + b2.h>= b1.y)
+        return true;
+    return false;
+}
 function getAngle (x1, y1, x2, y2) {
     var Vx = Math.round(x1 - x2);
 	var Vy = Math.round(y2 - y1);
@@ -104,6 +110,25 @@ function wait(mili) {
   });
 }
 
+// @ Force array to fit
+
+function ResizeArray(arr, size)
+{
+    var dff = size - arr.length; 
+    if (dff > 0)
+    {
+        var i;
+        for ( i = 0; i<dff;i++)
+            arr.push(new Array()); 
+        
+        return arr;    
+    }
+    if (dff < 0)
+    {
+        arr.splice(size);
+        return arr;
+    }
+}
 // @ Object 
 
 function GetObjectKeyValueAtIndex(object, index)
@@ -190,7 +215,7 @@ function GetTextInsideLabel(label, labeldeclarator, script)
     var i; 
     for ( i = 0 ; i < script.length; i++ )
     {
-        if ( script[i].includes(label))
+        if ( script[i].indexOf(label)>-1)
         {
             labelLine = i;
             break;
@@ -201,9 +226,10 @@ function GetTextInsideLabel(label, labeldeclarator, script)
     var nextlabelLine = script.length  ; 
     for ( i = labelLine + 1 ; i < script.length; i++ )
     {
-        if ( script[i].includes(labeldeclarator)) 
+        if ( script[i].indexOf(labeldeclarator)>-1) 
         {
             nextlabelLine = i; 
+            break;
         } 
     }
 
@@ -246,7 +272,7 @@ function getFile(event) {
       if ( input.files[0].name.endsWith(".map")){
          readFileContent(input.files[0]).then(content => { var arg = content.split("\r\n"); LoadMapFromFile(arg, Editor.Canvas); }).catch(error => console.log(error))
       }
-      if ( input.files[0].name.endsWith(".tezgraph")){
+      if ( input.files[0].name.endsWith(".pgr")){
          readFileContent(input.files[0]).then(content => { var arg = content.split("\r\n"); LoadProjectFromFile(arg,Editor.Canvas); }).catch(error => console.log(error))
       }
       if ( input.files[0].name.endsWith(".json")){

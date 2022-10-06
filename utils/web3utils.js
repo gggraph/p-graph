@@ -50,7 +50,26 @@ function HashToDecimal8(hashstring)
     }
     return result;
 }
-
+function SHA2Binary(hashstring)
+{
+    /*
+    byte[] bytes = new byte[32];
+        for (int i = 0; i < 64; i += 2)
+            bytes[i / 2] = Convert.ToByte(hexstr.Substring(i, 2), 16);
+        return bytes;
+    */
+    if ( hashstring.indexOf("0x") == 0 )
+    {
+        hashstring = hashstring.substr(2,hashstring.length-2);
+    }
+    var r = new Array();
+    for (var i = 0; i < 64; i += 2)
+    {
+        r.push(HexToDec(hashstring.substr(i,2)));
+    }
+    return r;
+  
+}
 function HashToDecimal32(hashstring)
 {
     var str = HexToASCII(hashstring);
@@ -162,6 +181,7 @@ function EtherToEuro(val)
 }
 var DollarForOneEther;
 var EuroForOneEther;
+
 async function RequestEtherToRealMoney()
 {
     const Http = new XMLHttpRequest();

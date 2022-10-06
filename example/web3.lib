@@ -1,0 +1,433 @@
+31
+loadblock
+17
+# [loadblock] load a block at index in its internal memory 
+#             then outputs it
+#
+#               index
+#            |    |
+#         [loadblock] 
+#              |
+--decl
+inp(2)
+outp(1)
+--code
+mem(0) = await Network.LoadBlockAtIndex(mem(1))
+out0(0)
+#df Output a blockchain block object
+#i0 Call 
+#i1 Set blockchain block index
+#o0 Out
+chainheight
+15
+# [chainheight] outputs blockchain length when triggered
+#               as number
+#
+#               |
+#         [chainheight]
+#               |
+--decl
+inp(1)
+outp(1)
+--code
+mem(0) = await Network.GetBlockchainLength()
+out0(0)
+#df Ouput current blockchain height
+#i0 Call 
+#o0 Out
+blockhash
+16
+# [blockhash] output hash of a block as a string
+#
+#            block 
+#              |    
+#         [blockhash] 
+#              |
+--decl
+inp(1)
+outp(1)
+--code
+if ( mem(0).hash != 'undefined'){Network.SetInternalBlock(mem(0));}
+mem(0) = Network.GetBlockHash();
+out0(0)
+#df Output hash of a blockchain block object
+#i0 Block
+#o0 Out
+blocktime
+17
+# [blocktime] output timestamp of a block as UNIX 
+#	      timestamp
+#
+#            block 
+#              |    
+#         [blocktime] 
+#              |
+--decl
+inp(1)
+outp(1)
+--code
+if ( mem(0).timestamp != 'undefined'){Network.SetInternalBlock(mem(0));}
+mem(0) = Network.GetBlockTimeStamp();
+out0(0)
+#df Output unix timestamp of a blockchain block object
+#i0 Block
+#o0 Out
+blockheight
+17
+# [blockheight] output height of a block
+#	        
+#
+#            block 
+#              |    
+#         [blockheight] 
+#              |
+--decl
+inp(1)
+outp(1)
+--code
+if ( mem(0).timestamp != 'undefined'){Network.SetInternalBlock(mem(0));}
+mem(0) = Network.GetBlockIndex();
+out0(0)
+#df Output height of a blockchain block object
+#i0 Block
+#o0 Out
+hashlerp
+15
+# [hashlerp] lerp hash value between 0 and 1
+#                
+#
+#               |
+#         [hashlerp  ]
+#               |
+--decl
+inp(1)
+outp(1)
+--code
+mem(0) = LerpHash(mem(0))
+out0(0)
+#df Output a value between [0-1] from a hash
+#i0 Hash
+#o0 Out
+blocknonce
+16
+# [blocknonce] output nonce of a block
+#	        
+#
+#            block 
+#              |    
+#         [blocknonce] 
+#              |
+--decl
+inp(1)
+outp(1)
+--code
+if ( mem(0).timestamp != 'undefined'){Network.SetInternalBlock(mem(0));}
+mem(0) = Network.GetBlockNonce();
+out0(0)
+#df Output nonce of a blockchain block
+#i0 Block 
+blockprehash
+16
+# [blockprehash] output previous hash of block
+#	        
+#
+#            block 
+#              |    
+#         [blockprehash] 
+#              |
+--decl
+inp(1)
+outp(1)
+--code
+if ( mem(0).timestamp != 'undefined'){Network.SetInternalBlock(mem(0));}
+mem(0) = Network.GetBlockPreviousHash();
+out0(0)
+#df Output previous hash of a blockchain block
+#i0 Block 
+blocktx
+18
+# [blocktx] output address of a block transactions 
+#               at index
+#	        
+#
+#            block   index
+#              |       |
+#         [blocktx] 
+#              |
+--decl
+inp(2)
+outp(1)
+--code
+if ( mem(0).timestamp != 'undefined'){Network.SetInternalBlock(mem(0));}
+mem(0) = Network.GetBlockTransactionAddress(mem(1));
+out0(0)
+#df Output address of a block transaction
+#i0 Block
+#i1 Index
+blockgas
+16
+# [blockgas] output gas used inside block
+#	        
+#
+#            block 
+#              |    
+#         [blockgas] 
+#              |
+--decl
+inp(1)
+outp(1)
+--code
+if ( mem(0).timestamp != 'undefined'){Network.SetInternalBlock(mem(0));}
+mem(0) = Network.GetBlockGasUsed();
+out0(0)
+#df Output gas used inside blockchain block
+#i0 Block
+blocksize
+16
+# [blocksize] output byte length of block
+#	        
+#
+#            block 
+#              |    
+#         [blocksize] 
+#              |
+--decl
+inp(1)
+outp(1)
+--code
+if ( mem(0).timestamp != 'undefined'){Network.SetInternalBlock(mem(0));}
+mem(0) = Network.GetBlockBytesSize();
+out0(0)
+#df Output byte size of a blockchain block
+#i0 Block
+tx
+15
+# [tx] output transaction from address
+#	        
+#
+#           addr
+#           |    
+#         [tx ] 
+#           |
+--decl
+inp(1)
+outp(1)
+--code
+mem(0) = await Network.LoadTransaction(mem(0));
+out0(0)
+#df Output a transaction from address
+#i0 address
+txhash
+15
+# [txhash] output hash of transaction
+#	        
+#
+#          tx
+#          |    
+#         [txhash] 
+#          |
+--decl
+inp(1)
+outp(1)
+--code
+mem(0) = await Network.GetTransactionHash();
+out0(0)
+#df Output hash of a transaction
+#i0 blockchain transaction
+txgas
+15
+# [txgas] output gas used for this transaction
+#	        
+#
+#          tx
+#          |    
+#         [txgas] 
+#          |
+--decl
+inp(1)
+outp(1)
+--code
+mem(0) = await Network.GetTransactionGasUsed();
+out0(0)
+#df Output gas used for a transaction
+#i0 blockchain transaction
+txprice
+15
+# [txprice] output gas price when transaction validated
+#	        
+#
+#          tx
+#          |    
+#         [txgas] 
+#          |
+--decl
+inp(1)
+outp(1)
+--code
+mem(0) = await Network.GetTransactionGasPrice();
+out0(0)
+#df Output gas price spent for blockchain transaction
+#i0 blockchain transaction
+txcreator
+15
+# [txcreator] output address of transaction creator
+#	        
+#
+#          tx
+#          |    
+#         [txcreator] 
+#          |
+--decl
+inp(1)
+outp(1)
+--code
+mem(0) = await Network.GetTransactionAccountAddr();
+out0(0)
+#df Output wallet address of a blockchain transaction
+#i0 blockchain transaction
+loadcontract
+0
+storagesize
+15
+# [storagesize] output number of variables inside
+#	         smartcontract
+#
+#           *
+#           |    
+#         [storagesize] 
+#           |
+--decl
+inp(1)
+outp(1)
+--code
+mem(0) = Network.GetStorageLength();
+out0(0)
+#df Output number of variables inside a smartcontract
+#i0 Smartcontract object
+contractaddr
+15
+# [contractaddr] output address of a contract
+#	        
+#
+#           *
+#           |    
+#         [contractaddr] 
+#           |
+--decl
+inp(1)
+outp(1)
+--code
+mem(0) = Network.GetContractAddress();
+out0(0)
+#df Output blockchain contract address
+#i0 Smartcontract object
+storage
+20
+# [storage] output value of a smartcontract at address and 
+#               name of the variable 
+#	        
+#
+#            index 
+#            |    
+#         [storage  ] 
+#            |     |
+--decl
+inp(1)
+outp(2)
+memset(3)
+--code
+mem(3) = mem(0)
+mem(0) = await Network.GetStorageKeyAtIndex(mem(3));
+mem(1) = await Network.GetStorageValueAtIndex(mem(3));
+out1(1)
+out0(0)
+#df Output value stored inside smartcontract
+#i0 Key index
+gasprice
+13
+# [gasprice] output current gas price of ethereum 
+#	       network
+#
+#           * 
+#           |    
+#         [gasprice] 
+#           |
+--decl
+inp(1)
+outp(1)
+--code
+mem(0) = await Network.GetAverageGasPrice();
+out0(0)
+num2mutez
+5
+--decl
+inp(1); outp(1)
+--code
+mem(0) = StorageValueToMutez(mem(0))
+out0(0)
+num2tez
+5
+--decl
+inp(1); outp(1)
+--code
+mem(0) = StorageValueToTez(mem(0))
+out0(0)
+mutez2tez
+5
+--decl
+inp(1); outp(1)
+--code
+mem(0) = MutezToTez(mem(0))
+out0(0)
+tez2mutez
+5
+--decl
+inp(1); outp(1)
+--code
+mem(0) = TezToMutez(mem(0))
+out0(0)
+wei2ether
+5
+--decl
+inp(1); outp(1)
+--code
+mem(0) = WeiToEther(mem(0))
+out0(0)
+ether2wei
+5
+--decl
+inp(1); outp(1)
+--code
+mem(0) = EtherToWei(mem(0))
+out0(0)
+gwei2wei
+5
+--decl
+inp(1); outp(1)
+--code
+mem(0) = GweiToWei(mem(0))
+out0(0)
+ether2doll
+5
+--decl
+inp(1); outp(1)
+--code
+mem(0) = EtherToDollar(mem(0))
+out0(0)
+ether2eur
+5
+--decl
+inp(1); outp(1)
+--code
+mem(0) = EtherToEuro(mem(0))
+out0(0)
+sha2bin
+8
+#df Output array of 32 number between 0-255 from a sha256 string
+--decl
+inp(1)
+outp(1)
+memset(2)
+--code
+mem(1) = SHA2Binary(mem(0))
+out0(1)

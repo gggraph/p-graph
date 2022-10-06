@@ -1,0 +1,560 @@
+26
+color
+19
+# [color] Ouput color as HTML5 definition
+#
+#                  *  r  g b
+#                  |  |  |  |
+#                [   color  ]
+#                  |                  
+--decl
+inp(4)
+outp(1)
+--code
+mem(0) = GetColor(mem(1),mem(2),mem(3))
+out0(0)
+#
+#df Output color object 
+#i0 Call
+#i1 Set red value between [0-255]
+#i2 Set green value between [0-255]
+#i3 Set blue value between [0-255]
+#o0 Out
+fill
+17
+# [fill] clear display with given color 
+#        
+#                      |   |
+#                    [fill   ]
+#                      |                      
+--decl
+inp(2)
+outp(1)
+mem(1) = GetColor(0,0,0)
+--code
+OutputCanvas.Fill(mem(1))
+out0(0)
+#
+#df Fill the screen with a color
+#i0 Call
+#i1 Set color. Default is black.
+#o0 Out
+pix
+18
+# [pix] print a pixel on screen at position x and y
+#       
+#                *  x   y  c
+#                |  |   |   |
+#               [pix         ]
+#                |
+#
+--decl
+inp(4); outp(1)
+mem(3) = GetColor(255,255,255)
+--code
+OutputCanvas.FillSquare(mem(1),mem(2), 1, mem(3))
+#df Print a pixel on screen
+#i0 Call
+#i1 Set x position
+#i2 Set y position
+#i3 Set pixel color
+#o0 Out
+graph
+20
+# 2-dim tab that can be displayed and set by interacting
+#                              *   xi   yi   st
+#                              |   |    |    | 
+#                              [graph        ] 
+#                              |  
+#
+--decl
+inp(4)
+outp(1)
+memset(6)
+mem(5)=new Array()
+var i
+for (i=0; i<50;i++){ mem(5).push(new Array(50).fill(0)); }
+--code
+out0(5)
+--ipf3
+mem(5)[mem(1)][mem(2)] = mem(3)
+#i1 Write X-index
+#i2 Write Y-index
+#i3 Store value
+square
+20
+# [square] stroke a square
+#       
+#                *  x   y  s   c   lw
+#                |  |   |   |   |   |
+#               [square             ]
+#                |
+#
+--decl
+inp(6); outp(1)
+mem(4) = GetColor(255,255,255)
+mem(5) = 2
+--code
+OutputCanvas.StrokeSquare(mem(1),mem(2), mem(3), mem(4), mem(5))
+out0(0)
+#df Stroke a square
+#i1 Set x position
+#i2 Set y position
+#i3 Set dimension
+#i4 Set line color
+#i5 Set line width
+squarefill
+18
+# [squarefill] fill a square
+#       
+#                *  x   y  s   c
+#                |  |   |   |   |
+#               [squarefill      ]
+#                |
+#
+--decl
+inp(5); outp(1)
+mem(4) = GetColor(255,255,255)
+--code
+OutputCanvas.FillSquare(mem(1),mem(2), mem(3), mem(4))
+out0(0)
+#df Fill a square
+#i1 Set x position
+#i2 Set y position
+#i3 Set dimension
+#i4 Set square color
+rect
+21
+# [rect] stroke a rect
+#       
+#                *  x   y  w  h  c   lw
+#                |  |   |   |   |   |  |
+#               [rect                    ]
+#                |
+#
+--decl
+inp(7); outp(1)
+mem(5) = GetColor(255,255,255)
+mem(6) = 3
+--code
+OutputCanvas.StrokeRect(mem(1),mem(2), mem(3), mem(4),mem(5), mem(6))
+out0(0)
+#df Stroke a rectangle
+#i1 Set x position
+#i2 Set y position
+#i3 Set rectangle width
+#i4 Set rectangle height
+#i5 Set line color
+#i6 Set line width
+rectfill
+19
+# [rectfill] fill a rect
+#       
+#                *  x   y  w  h  c
+#                |  |   |   |   |  |
+#               [rectfill           ]
+#                |
+#
+--decl
+inp(6); outp(1)
+mem(5) = GetColor(255,255,255)
+--code
+OutputCanvas.FillRect(mem(1),mem(2), mem(3), mem(4), mem(5))
+out0(0)
+#df Fill a rectangle
+#i1 Set x position
+#i2 Set y position
+#i3 Set rectangle width
+#i4 Set rectangle height
+#i5 Set rectangle color
+circle
+20
+# [circle] stroke a circle
+#       
+#                *  x   y  s   c  lw
+#                |  |   |   |   |  |
+#               [circle             ]
+#                |
+#
+--decl
+inp(6); outp(1)
+mem(4) = GetColor(255,255,255)
+mem(5) = 3
+--code
+OutputCanvas.StrokeCircle(mem(1),mem(2), mem(3), mem(4) ,mem(5))
+out0(0)
+#df Stroke a circle
+#i1 Set x position
+#i2 Set y position
+#i3 Set radius
+#i4 Set line color
+#i5 Set line width
+circlefill
+18
+# [circlefill] fill a circle
+#       
+#                *  x   y  s   c
+#                |  |   |   |   |
+#               [circlefill       ]
+#                |
+#
+--decl
+inp(5); outp(1)
+mem(4) = GetColor(255,255,255)
+--code
+OutputCanvas.FillCircle(mem(1),mem(2), mem(3), mem(4))
+out0(0)
+#df Fill a circle
+#i1 Set x position
+#i2 Set y position
+#i3 Set radius
+#i4 Set circle color
+line
+21
+# [line] draw a line
+#       
+#                *  x   y  x1  y1  c   lw
+#                |  |   |   |   |    |   |
+#               [line                      ]
+#                |
+#
+--decl
+inp(7); outp(1)
+mem(5) = GetColor(255,255,255)
+mem(6) = 3
+--code
+OutputCanvas.DrawLine(mem(1),mem(2), mem(3), mem(4),mem(5),mem(6))
+out0(0)
+#df Draw a line
+#i1 Set x starting position
+#i2 Set y starting position
+#i3 Set x ending position
+#i4 Set y ending position
+#i5 Set line color
+#i6 Set line width
+arc
+24
+# [arc] stroke an arc
+#       
+#                *  x   y  r   st  en c   lw
+#                |  |   |   |   |   |   |   |
+#               [arc                           ]
+#                |
+#
+--decl
+inp(8); outp(1)
+mem(6) = GetColor(255,255,255)
+mem(7) = 3
+--code
+var astart = ((2*Math.PI) * (mem(4)/100)) - (Math.PI/2)
+var aend = ((2*Math.PI) * (mem(5)/100)) - (Math.PI/2)
+OutputCanvas.StrokeArc(mem(1),mem(2), mem(3), astart, aend, mem(6), mem(7))
+out0(0)
+#df Stroke an arc
+#i1 Set x position
+#i2 Set y position
+#i3 Set radius
+#i4 Set angle start in %  [from north]
+#i5 Set angle end  in %   [from north]
+#i6 Set arc color
+#i7 Set line width
+arcfill
+22
+# [arcfill] fill a arc
+#       
+#                *  x   y  r   st  en  c
+#                |  |   |   |   |   |    |
+#               [arcfill                    ]
+#                |
+#
+--decl
+inp(7); outp(1)
+mem(6) = GetColor(255,255,255)
+--code
+var astart = ((2*Math.PI) * (mem(4)/100)) - (Math.PI/2)
+var aend = ((2*Math.PI) * (mem(5)/100)) - (Math.PI/2)
+OutputCanvas.FillArc(mem(1),mem(2), mem(3), astart, aend, mem(6))
+out0(0)
+#df Fill a arc
+#i1 Set x position
+#i2 Set y position
+#i3 Set radius
+#i4 Set angle start in %  [from north]
+#i5 Set angle end  in %   [from north]
+#i6 Set arc color
+txtfill
+18
+--decl
+inp(7)
+outp(1)
+mem(3) = GetColor(255,255,255)
+mem(5) = 12
+mem(6) = ' '
+--code
+var f = 'font'+mem(4)
+OutputCanvas.FillText(mem(0),mem(1),mem(2),mem(3),f, mem(5), mem(6))
+out0(0)
+#df Draw text on screen
+#i0 Text
+#i1 Set x position
+#i2 Set y position
+#i3 Set text color
+#i4 Set font index
+#i5 Set font size
+#i6 Set font style 
+txtstroke
+18
+--decl
+inp(7)
+outp(1)
+mem(3) = GetColor(255,255,255)
+mem(5) = 12
+mem(6) = ' '
+--code
+var f = 'font'+mem(4)
+OutputCanvas.StrokeText(mem(0),mem(1),mem(2),mem(3),f, mem(5), mem(6))
+out0(0)
+#df Stroke a text on screen
+#i0 Text
+#i1 Set x position
+#i2 Set y position
+#i3 Set text color
+#i4 Set font index
+#i5 Set font size
+#i6 Set font style 
+drawgraph
+17
+--decl
+inp(3)
+outp(0)
+mem(2) = GetColor(255,255,255)
+--code
+for ( var x = 0 ; x < mem(0).length; x++ ) {
+for ( var y = 0; y < mem(0)[x].length; y++){
+if ( mem(0)[x][y] != 0 )
+{
+OutputCanvas.FillSquare(mem(0)[x]*mem(1),mem(0)[y]*mem(1), 30*mem(1), mem(2));
+}
+}
+}
+#df Draw mesh from [graph ] object
+#i0 2-dim array
+#i1 Set dimension
+#i2 Set color
+v3
+10
+#df Output a vector3 value
+#i1 Set x
+#i2 Set y
+#i3 Set z
+--decl
+inp(4)
+outp(1)
+--code
+mem(0) = [mem(1),mem(2),mem(3)]
+out0(0)
+v3*
+12
+#df Multiply vector by x,y,z
+#i1 Set x
+#i2 Set y
+#i3 Set z
+--decl
+inp(4)
+outp(1)
+--code
+mem(0)[0] *= mem(1)
+mem(0)[1] *= mem(2)
+mem(0)[2] *= mem(3)
+out0(0)
+v3+
+12
+#df Add vector by x,y,z
+#i1 Set x
+#i2 Set y
+#i3 Set z
+--decl
+inp(4)
+outp(1)
+--code
+mem(0)[0] += mem(1)
+mem(0)[1] += mem(2)
+mem(0)[2] += mem(3)
+out0(0)
+v3add
+13
+#df Add 2 vectors
+#i1 Set x
+#i2 Set y
+#i3 Set z
+--decl
+inp(2)
+outp(1)
+mem(1) = [0,0,0]
+--code
+mem(0)[0] += mem(1)[0] 
+mem(0)[1] += mem(1)[1] 
+mem(0)[2] += mem(1)[2] 
+out0(0)
+v3mul
+13
+#df Multiply 2 vectors
+#i1 Set x
+#i2 Set y
+#i3 Set z
+--decl
+inp(2)
+outp(1)
+mem(1) = [1,1,1]
+--code
+mem(0)[0] *= mem(1)[0] 
+mem(0)[1] *= mem(1)[1] 
+mem(0)[2] *= mem(1)[2] 
+out0(0)
+v2mat
+16
+#df Multiply vector by a 4x4 Matrix
+#i1 Set matrix
+--decl
+inp(2)
+outp(1)
+--code
+var x = 0.0
+var y = 0.0
+var z = 0.0
+x = mem(0)[0] * mem(1)[0][0] + mem(0)[1] * mem(1)[1][0] + mem(0)[2] * mem(1)[2][0] + mem(1)[3][0]
+y = mem(0)[0] * mem(1)[0][1] + mem(0)[1] * mem(1)[1][1] + mem(0)[2] * mem(1)[2][1] + mem(1)[3][1];
+z  = mem(0)[0] * mem(1)[0][2] + mem(0)[1] * mem(1)[1][2] +mem(0)[2] * mem(1)[2][2] + mem(1)[3][2];
+var w = mem(0)[0] * mem(1)[0][3];
+if (w != 0.0){x /= w; y /= w; z /= w;}
+mem(0) = [x,y,z]
+out0(0)
+3dcube
+52
+#df 3D-cube of 36 vertices for projection test
+#          r       i
+#          |      |
+#          [3dcube    ]
+#          |
+--decl
+inp(2)
+outp(1)
+memset(3)
+var a = new Array();
+a.push([0,0,0]) 
+a.push([0,1,0])
+a.push([1,1,0])
+a.push([0,0,0])
+a.push([1,1,0])
+a.push([1,0,0])
+a.push([1,0,0])
+a.push([1,1,0])
+a.push([1,1,1])
+a.push([1,0,0])
+a.push([1,1,1])
+a.push([1,0,1])
+a.push([1,0,1])
+a.push([1,1,1])
+a.push([0,1,1])
+a.push([1,0,1])
+a.push([0,1,1])
+a.push([0,0,1])
+a.push([0,0,1])
+a.push([0,1,1])
+a.push([0,1,0])
+a.push([0,0,1])
+a.push([0,1,0])
+a.push([0,0,0])
+a.push([0,1,0])
+a.push([0,1,1])
+a.push([1,1,1])
+a.push([0,1,0])
+a.push([1,1,1])
+a.push([1,1,1])
+a.push([1,0,1])
+a.push([0,0,1])
+a.push([0,0,0])
+a.push([1,0,1])
+a.push([0,0,0])
+a.push([1,0,0])
+mem(2) =a
+--code
+mem(0) = mem(2)[mem(1)]
+out0(0)
+#i0 Read at index
+#i1 Set index
+opline
+13
+--decl 
+inp(5)
+outp(1)
+mem(3) = GetColor(255,255,255)
+mem(4) = 3
+--code
+OutputCanvas.OpenLine(mem(1),mem(2),mem(3),mem(4))
+out0(0)
+#df Start path at position
+#i1 Set x
+#i2 Set y
+#i3 Set color
+#i4 Set line width
+ctline
+9
+--decl 
+inp(3)
+outp(1)
+--code
+OutputCanvas.MoveLine(mem(1),mem(2))
+out0(0)
+#df Stroke path at position
+#i1 Set x
+#i2 Set y
+.obj
+47
+#df Store .obj data from a .obj file data
+#v   i   vd   ln    loa
+#|   |   |     |     |
+#[ .obj            ] 
+# |   |   |     |
+#i0 Output vector3 data from indices number
+#i1 Output indice value at given index
+#i2 Output vector3 value at given index
+#i3 Output indices count
+#i4 Load OBJ data from text
+--decl
+inp(5)
+outp(4)
+--code
+# Output vector3 from a given indices
+var indice = self.OBJ[1][mem(0)]
+mem(0)=self.OBJ[0][indice]
+out0(0)
+--ipf1
+# Output indice value
+mem(1) = self.OBJ[1][mem(1)]
+out1(1)
+--ipf2
+# Output vector value
+mem(2) = self.OBJ[0][mem(2)]
+out2(2)
+--ipf3
+mem(3) =  self.OBJ[1].length;
+out3(3)
+--ipf4
+# parse .OBJ
+var t = mem(4).split("\n");
+var verts = new Array()
+var indices = new Array()
+for ( var i = 0 ; i < t.length ; i++){
+if ( t[i][0] == 'v'){
+var param = t[i].substr(1,t[i].length -1 );
+param = param.split(' ');
+var vec3 = new Array();
+for ( var n = 0 ; n < param.length; n++){
+if (param[n].length > 0){vec3.push(parseFloat(param[n]))}}
+verts.push(vec3);}
+if ( t[i][0] == 'f'){
+var param = t[i].substr(1,t[i].length -1 );param = param.split(' ');
+for ( var n = 0 ; n < param.length; n++){
+if (param[n].length > 0){indices.push(parseInt(param[n]))}}}}
+self.OBJ = [verts,indices]

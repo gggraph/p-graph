@@ -22,6 +22,7 @@ class Onglets
     
     AddThumbnail(data)
     {
+        
         // @ Try Add this thumbnail
         var sIndex = this.GetSimilarThumbnailIndex(data);
         if (sIndex> -1)

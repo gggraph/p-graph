@@ -3,26 +3,144 @@ function InterpreteBlockCode(block)
    var r = InterpreteNative(block.NativeScript);
    block.declar = r[0];
    block.methods = r[1];
+   
+   block.wireoutmethods = r[2];
+   block.dcoutmethods = r[3];
+   block.wireinmethods = r[4];
+   block.dcinmethods = r[5];
+   block.miscmethods = r[6];
 }
 
 function InterpreteNative(nativescript)
 {
-    var declar = GetDeclarationRegion(nativescript);
-    var method = GetCodeRegion(nativescript);
+    var declar = ProccessCodeFromRegion(nativescript,"--decl")
+    var method = ProccessCodeFromRegion(nativescript,"--code")
     
-    var declregion = ProccessPseudoRN(declar); // Get Back Array 
-    var coderegion = ProccessPseudoRN(method); // Get Back Array 
-    
-    declar = InterpreteRegion(declregion);
-    method = InterpreteRegion(coderegion);
-        
     var methods = GetIPFCodeRegions(nativescript);
     if ( methods.length == 0)
         methods.push(method);
     else
         methods[0] = method;
     
-    return new Array(declar, methods);
+    var ooc = GetWireOutRegions(nativescript)
+    var ood = GetDCOutRegions(nativescript)
+    var oic = GetWireInRegions(nativescript)
+    var oid = GetDCInRegions(nativescript)
+    
+    var misc = new Array();
+    misc.push(ProccessCodeFromRegion(nativescript,"--arg")) // #misc 0 is on argument received... 
+    misc.push(ProccessCodeFromRegion(nativescript,"--end")) // #misc 0 is on argument received... 
+    return new Array(declar, methods, ooc, ood, oic, oid, misc);
+}
+function ProccessCodeFromRegion(nativescript,regionname)
+{
+    var rawreg = GetTextInsideLabel(regionname, "--", nativescript);
+    var proc = ProccessPseudoRN(rawreg);
+    return InterpreteRegion(proc);
+}
+function GetDCInRegions(nativescript)
+{
+    var r = new Array();
+    for (var i = 0; i < nativescript.length; i++ )
+    {
+        if ( nativescript[i].indexOf("--dcwi") == 0)
+        {
+            var ipnum = parseInt(nativescript[i].replaceAll("--dcwi",""));
+            var dff = ipnum - r.length;
+            if ( dff > 0)
+            {
+                for ( var n = 0 ; n < dff; n++)
+                    r.push("");
+            }
+            if ( dff < 0)
+                r.splice(ipnum);
+
+            // Get region
+            var rawreg = GetTextInsideLabel(nativescript[i], "--", nativescript);
+            var proc = ProccessPseudoRN(rawreg);
+            var code = InterpreteRegion(proc);
+            r[ipnum] = code;
+        }
+    }
+    return r;
+}
+function GetWireInRegions(nativescript)
+{
+    var r = new Array();
+    for (var i = 0; i < nativescript.length; i++ )
+    {
+        if ( nativescript[i].indexOf("--wi") == 0)
+        {
+            var ipnum = parseInt(nativescript[i].replaceAll("--wi",""));
+            var dff = ipnum - r.length;
+            if ( dff > 0)
+            {
+                for ( var n = 0 ; n < dff; n++)
+                    r.push("");
+            }
+            if ( dff < 0)
+                r.splice(ipnum);
+
+            // Get region
+            var rawreg = GetTextInsideLabel(nativescript[i], "--", nativescript);
+            var proc = ProccessPseudoRN(rawreg);
+            var code = InterpreteRegion(proc);
+            r[ipnum] = code;
+        }
+    }
+    return r;
+}
+function GetDCOutRegions(nativescript)
+{
+    var r = new Array();
+    for (var i = 0; i < nativescript.length; i++ )
+    {
+        if ( nativescript[i].indexOf("--dcwo") == 0)
+        {
+            var ipnum = parseInt(nativescript[i].replaceAll("--dcwo",""));
+            var dff = ipnum - r.length;
+            if ( dff > 0)
+            {
+                for ( var n = 0 ; n < dff; n++)
+                    r.push("");
+            }
+            if ( dff < 0)
+                r.splice(ipnum);
+
+            // Get region
+            var rawreg = GetTextInsideLabel(nativescript[i], "--", nativescript);
+            var proc = ProccessPseudoRN(rawreg);
+            var code = InterpreteRegion(proc);
+            r[ipnum] = code;
+        }
+    }
+    return r;
+}
+function GetWireOutRegions(nativescript)
+{
+    var r = new Array();
+    for (var i = 0; i < nativescript.length; i++ )
+    {
+        if ( nativescript[i].indexOf("--wo") == 0)
+        {
+            var ipnum = parseInt(nativescript[i].replaceAll("--wo",""));
+            var dff = ipnum - r.length;
+            if ( dff > 0)
+            {
+                for ( var n = 0 ; n < dff; n++)
+                    r.push("");
+            }
+            if ( dff < 0)
+                r.splice(ipnum);
+
+            // Get region
+            var rawreg = GetTextInsideLabel(nativescript[i], "--", nativescript);
+            var proc = ProccessPseudoRN(rawreg);
+            var code = InterpreteRegion(proc);
+            r[ipnum] = code;
+        }
+    }
+    return r;
 }
 
 function GetIPFCodeRegions(nativescript)
@@ -52,16 +170,6 @@ function GetIPFCodeRegions(nativescript)
     return r;
 }
 
-function GetDeclarationRegion(nativescript)
-{
-     // @ Get Lines Between --decl
-    return GetTextInsideLabel("--decl", "--", nativescript)
-}
-function GetCodeRegion(nativescript)
-{
-    // @ Get Lines Between --code
-    return GetTextInsideLabel("--code", "--", nativescript)
-}
 
 function ProccessPseudoRN(text)
 {
@@ -97,12 +205,16 @@ function InterpreteRegion(region) // this is as a unique string;
     //@ Parse MEM & OUT STUFF
     // parse MEM()
     r = ParseMEM(r);
+    r = ParseSELF(r);
     // parse OUT()
     r = ParseOUT(r);
     return r; 
     
 }
-
+function ParseSELF(text)
+{
+    return text.replaceAll("self", "?");    
+}
 function ParseMEM(text)
 {
     //@ Check for MEM()
@@ -128,7 +240,7 @@ function ParseMEM(text)
             if ( !legit)
                 break;
             // @
-            console.log("MEM WAS FOUND AND ARG IS " + arg);
+            //console.log("MEM WAS FOUND AND ARG IS " + arg);
             
             // @ replace text
             var rpstr = "?.memory["+arg+"]";
@@ -180,7 +292,7 @@ function ParseOUT(text)
             if ( !legit)
                 break;
             // @
-            console.log("OUT WAS FOUND -> COMPORT IS " + comport +" and ARG IS " + arg);
+            //console.log("OUT WAS FOUND -> COMPORT IS " + comport +" and ARG IS " + arg);
             
             // @ replace text
             var rpstr = "?.O("+comport+","+arg+")";

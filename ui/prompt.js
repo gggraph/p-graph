@@ -23,11 +23,11 @@ class Prompter
     }
     SetUpDefaultText()
     {
-        this.DefaultText.push("welcome to TEZO GRAPH ver 0.000001 ");
+        this.DefaultText.push("welcome to P GRAPH ver 0.000001 ");
         this.DefaultText.push("press [n] to create a new block         ");
         this.DefaultText.push("double click on block to rename it ");
         this.DefaultText.push("press [suppr] while renaming delete the block");
-        this.DefaultText.push("this is not puredata. this is tezograph");
+        this.DefaultText.push("this is not puredata. this is p-graph :D");
         this.DefaultText.push("                                        ");
         this.DefaultText.push("looking for new idea ? press [$]        ");
         this.DefaultText.push("you can pass block value to another window with a [out %%] block");

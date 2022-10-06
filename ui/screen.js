@@ -29,41 +29,24 @@ class Canvas
     {
         this.ForceFill("rgb(255,255,255)");
     }
-    ForceFill(color)
+     ForceFill(color)
     {
          var _g = this.context;
-         var ss = _g.fillStyle;
          _g.fillStyle = color;
          _g.fillRect(0,0,this.box.w, this.box.h);
-         _g.fillStyle = ss;
     }
-    Fill()
+    Fill(color)
     {
-        this.FillRect(0,0,this.box.w, this.box.h);
-    }
-    
-    SetColor(r,g,b)
-    {
-     var _g = this.context;
-     _g.fillStyle = 'rgb('+r+','+g+','+b+')';
-     _g.strokeStyle = 'rgb('+r+','+g+','+b+')';
-    }
-    
-    SetPenWidth(val)
-    {
-        var _g = this.context;
-        _g.lineWidth = val;
-        _g.strokeWidth = val;
+        this.FillRect(0,0,this.box.w, this.box.h,color);
     }
     
     // @ Basic HTML5 draw command
-    
-    FillRect(x,y,w,h)
+    FillRect(x,y,w,h,color)
     {
         var _g = this.context;
         x+= this.bordersize;
         y+= this.bordersize;
-
+        _g.fillStyle = color;
         // lower w/h is above 
         if ( x+w > this.box.w-this.bordersize*2)
             w = this.box.w-this.bordersize - x ;
@@ -72,12 +55,13 @@ class Canvas
 
         _g.fillRect(x,y,w,h);
     }
-    StrokeRect(x,y,w,h)
+    StrokeRect(x,y,w,h,color,linewidth)
     {
         var _g = this.context;
         x+= this.bordersize;
         y+= this.bordersize;
-
+        _g.strokeStyle = color;
+        _g.lineWidth = linewidth;
         // lower w/h is above 
         if ( x+w > this.box.w-this.bordersize*2)
             w = this.box.w-this.bordersize - x ;
@@ -86,13 +70,13 @@ class Canvas
 
         _g.strokeRect(x,y,w,h);
     }
-    FillSquare(x,y,s)
+    FillSquare(x,y,s, color)
     {
          var _g = this.context;
 
         x+= this.bordersize;
         y+= this.bordersize;
-
+         _g.fillStyle = color;
         // lower w/h is above 
         if ( x+s > this.box.w-this.bordersize*2)
             s = this.box.w-this.bordersize - x ;
@@ -101,11 +85,13 @@ class Canvas
 
        _g.fillRect(x,y,s,s);
     }
-    StrokeSquare(x,y,s)
+    StrokeSquare(x,y,s,color,linewidth)
     {
         var _g = this.context;
         x+= this.bordersize;
         y+= this.bordersize;
+         _g.strokeStyle = color;
+        _g.lineWidth = linewidth;
         // lower w/h is above 
         if ( x+s > this.box.w-this.bordersize*2)
             s = this.box.w-this.bordersize - x ;
@@ -114,57 +100,89 @@ class Canvas
 
        _g.strokeRect(x,y,s,s);
     }
-    SetPixel(x,y)
-    {
-        var _g = this.context;
-        this.FillSquare(x,y,_g.lineWidth)
-    }
     
-    DrawLine(x,y,x1,y1)
+    DrawLine(x,y,x1,y1,color,linewidth)
     {
         var _g = this.context;
+       _g.strokeStyle = color;
+       _g.lineWidth = linewidth;
        _g.beginPath();
        _g.moveTo(x, y);
        _g.lineTo(x1,y1);
        _g.closePath();
        _g.stroke();
     }
-    FillCircle(centerx, centery, rad)
+    FillCircle(centerx, centery, rad, color)
     {
         var _g = this.context;
+        _g.fillStyle = color;
         _g.beginPath();
         _g.arc(centerx, centery, rad, 0, 2* Math.PI, false);
         _g.fill();
         _g.closePath();
     }
-    StrokeCircle(centerx, centery, rad)
+    StrokeCircle(centerx, centery, rad,color,linewidth)
     {
         var _g = this.context;
+        _g.strokeStyle = color;
+        _g.lineWidth = linewidth;
         _g.beginPath();
         _g.arc(centerx, centery, rad, 0, 2* Math.PI, false);
         _g.stroke();
         _g.closePath();
     }
-    FillArc(centerx, centery, rad, radian)
+
+    FillTriangle(x0,y0,x1,y1,x2,y2, color)
     {
         var _g = this.context;
+        _g.fillStyle = color;
+        _g.beginPath()
+        _g.moveTo(x0, y0);
+        _g.lineTo(x1, y1);
+        _g.lineTo(x2, y2);
+        _g.lineTo(x0, y0);
+        _g.fill();
+        _g.closePath()
+    }
+    StrokeTriangle(x0,y0,x1,y1,x2,y2, color,linewidth)
+    {
+        var _g = this.context;
+        _g.strokeStyle = color;
+        _g.lineWidth = linewidth;
+        _g.beginPath()
+        _g.moveTo(x0, y0);
+        _g.lineTo(x1, y1);
+        _g.lineTo(x2, y2);
+        _g.lineTo(x0, y0);
+        _g.closePath()
+        _g.stroke();
+        
+    }
+    FillArc(centerx, centery, rad, anglestart, angleend, color)
+    {
+        var _g = this.context;
+         _g.fillStyle = color;
         _g.beginPath();
-        _g.arc(centerx, centery, rad, 0, radian, false);
+        _g.arc(centerx, centery, rad, anglestart, angleend, false);
         _g.fill();
         _g.closePath();
     }
-    StrokeArc(centerx, centery, rad, radian)
+    StrokeArc(centerx, centery, rad, anglestart, angleend ,color,linewidth)
     {
         var _g = this.context;
+        _g.strokeStyle = color;
+        _g.lineWidth = linewidth;
         _g.beginPath();
-        _g.arc(centerx, centery, rad, 0, radian, false);
+        _g.arc(centerx, centery, rad, anglestart, angleend, false);
         _g.stroke();
         _g.closePath();
     }
-    OpenLine(x,y)
+    OpenLine(x,y, color, linewidth)
     {
-        this.LastPathPosition.x = x;
-        this.LastPathPosition.y = y;
+        var _g = this.context;
+        this.LastPathPosition = new Vector2(x,y);
+        _g.strokeStyle = color;
+        _g.lineWidth = linewidth;
     }
     MoveLine(x,y)
     {
@@ -177,21 +195,31 @@ class Canvas
         this.LastPathPosition.x = x;
         this.LastPathPosition.y = y;
     }
-    SetFont(fontname,fontsize, style)
+    MeasureText(text,fontname, fontsize, style)
     {
         var _g = this.context;
         _g.font = style + " "+fontsize+"px "+fontname;
+        return _g.measureText(text).width;
     }
-    FillText(text, x, y)
+    FillText(text, x, y , color, fontname, fontsize, style)
     {
         var _g = this.context;
+        _g.fillStyle = color;
+        _g.font = style + " "+fontsize+"px "+fontname;
         _g.fillText(text, x, y);
     }
-    StrokeText(text, x, y)
+    StrokeText(text, x, y, color, fontname, fontsize, style)
     {
         var _g = this.context;
+        _g.strokeStyle = color;
+        _g.font = style + " "+fontsize+"px "+fontname;
         _g.strokeText(text, x, y);
     }
+}
+
+function GetColor(r,g,b)
+{
+    return 'rgb('+r+','+g+','+b+')'
 }
 
 // Easy Function to create a canvas... 

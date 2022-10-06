@@ -1,0 +1,1330 @@
+45
+sin~
+27
+# [sin~]  outputs a sine wave
+#        
+#                      x    freq
+#                      |    |    
+#                    [sin~ ]
+#                      |
+--decl
+inp(2)
+outp(1)
+self.audioNode = audioContext.createOscillator();
+self.audioNode.type = 'sine';
+self.audioNode.frequency.setValueAtTime(800, 0);
+self.audioNode.start(0);
+--code
+--ipf1
+self.audioNode.frequency.setValueAtTime(mem(1), 0);
+--wi0
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+OnNodeConnect(wblock,self.audioNode.frequency);
+--dcwi1
+OnNodeDisconnect(wblock,self.audioNode.frequency);
+#df Output a sine wave
+#i0 reserved
+#i1 Set frequency
+sqr~
+27
+# [sqr~]  outputs a square wave
+#        
+#                      x    freq
+#                      |    |    
+#                    [sin~ ]
+#                      |
+--decl
+inp(2)
+outp(1)
+self.audioNode = audioContext.createOscillator();
+self.audioNode.type = 'square'
+self.audioNode.frequency.setValueAtTime(800, 0);
+self.audioNode.start(0);
+--code
+--ipf1
+self.audioNode.frequency.setValueAtTime(mem(1), 0);
+--wi0
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+OnNodeConnect(wblock,self.audioNode.frequency);
+--dcwi1
+OnNodeDisconnect(wblock,self.audioNode.frequency);
+#df Output a square wave
+#i0 reserved
+#i1 Set frequency
+tri~
+27
+# [tri~]  outputs a triangle wave
+#        
+#                      x    freq
+#                      |    |    
+#                    [sin~ ]
+#                      |
+--decl
+inp(2)
+outp(1)
+self.audioNode = audioContext.createOscillator();
+self.audioNode.type = 'triangle'
+self.audioNode.frequency.setValueAtTime(800, 0);
+self.audioNode.start(0);
+--code
+--ipf1
+self.audioNode.frequency.setValueAtTime(mem(1), 0);
+--wi0
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+OnNodeConnect(wblock,self.audioNode.frequency);
+--dcwi1
+OnNodeDisconnect(wblock,self.audioNode.frequency);
+#df Output a triangle wave
+#i0 reserved
+#i1 Set frequency
+saw~
+27
+# [saw~]  outputs a sawtooth wave
+#        
+#                      x    freq
+#                      |    |    
+#                    [sin~ ]
+#                      |
+--decl
+inp(2)
+outp(1)
+self.audioNode = audioContext.createOscillator();
+self.audioNode.type = 'sawtooth'
+self.audioNode.frequency.setValueAtTime(800, 0);
+self.audioNode.start(0);
+--code
+--ipf1
+self.audioNode.frequency.setValueAtTime(mem(1), 0);
+--wi0
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+OnNodeConnect(wblock,self.audioNode.frequency);
+--dcwi1
+OnNodeDisconnect(wblock,self.audioNode.frequency);
+#df Output a saw wave
+#i0 reserved
+#i1 Set frequency
+~~
+16
+# [~~] Speaker
+#       
+#                      
+#                      |   
+#                    [~~]
+#      
+--decl
+inp(1)
+outp(0)
+self.audioNode = audioContext.createGain();
+self.audioNode.connect(masterVolume);
+--wi0
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+OnNodeDisconnect(wblock,self.audioNode);
+#df Output signal to speaker
+~
+24
+# [~] gain node
+#        
+#                      *      v
+#                      |      |  
+#                    [~        ]
+#                      |
+--decl
+inp(2)
+outp(1)
+self.audioNode =  audioContext.createGain();
+--code
+self.audioNode.value= mem(0)
+--ipf1
+self.audioNode.gain.value = mem(1)
+--wi0
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+OnNodeConnect(wblock,self.audioNode.gain);
+--dcwi1
+OnNodeDisconnect(wblock,self.audioNode.gain);
+#df Pass audio signal 
+#i1 Modulate signal amplitude by value
+hz2midi
+7
+--decl
+inp(1)
+outp(1)
+--code
+mem(0) = 12 * (Math.log(mem(0)/220)/Math.log(2)) + 57
+out0(0)
+#df Output midi value from frequency
+midi2hz
+7
+--decl
+inp(1)
+outp(1)
+--code
+mem(0)=440*(Math.pow(2,((mem(0)-69)/12)))
+out0(0)
+#df Output frequency from midi value
+midisq
+13
+#df Output key tones incrementally from string input
+#i0 string
+--decl
+inp(1)
+outp(2)
+memset(2)
+--code
+mem(0) = mem(0).split(' ')
+mem(1)++
+if (mem(1)>= mem(0).length) { mem(1) = 0}
+mem(0) = parseInt(mem(0)[mem(1)])
+out0(0)
+out1(1)
+chord
+9
+#df Output chord from string input
+#i0 string
+--decl
+inp(1)
+outp(1)
+memset(2)
+--code
+mem(1) = mem(0).split(' ')
+for ( var i = 0 ; i < mem(1).length; i++) {  mem(0) = mem(1)[i]; out0(0); }
+midisnd
+8
+#df Send message to midi device
+#i0 Byte array
+#i1 Set Device identifier
+--decl
+inp(2)
+mem(1)=1
+--code
+SendMidiMessage(mem(0), mem(1))
+midikey
+15
+--decl
+inp(5)
+outp(0)
+mem(4)=1
+mem(3)=1000
+--code
+SendKeyOn(mem(1),mem(2),mem(4))
+await wait(mem(3))
+SendKeyOff(mem(1), mem(4))
+#df Send keystroke to midi device
+#i0 Call
+#i1 Set midi note
+#i2 Set velocity
+#i3 Set tone length
+#i4 Set midi device number
+faust~greyhole
+79
+--decl
+inp(8)
+outp(1)
+#standart Faust WASM implementation
+var pluginURL = 'sound/audioworklet/RIPFAUST/greyhole/.';
+var plugin = new testworklet(audioContext, pluginURL);
+var node = await plugin.load()
+self.audioNode = node;
+self.audioNode.setParamValue("/Greyhole/Mix/size", 0.5);
+--ipf1
+self.audioNode.setParamValue("/Greyhole/Mix/damping", mem(1));
+--ipf2
+self.audioNode.setParamValue("/Greyhole/Mix/delayTime", mem(2));
+--ipf3
+self.audioNode.setParamValue("/Greyhole/Mix/size", mem(3));
+--ipf4
+self.audioNode.setParamValue("/Greyhole/Mix/diffusion", mem(4));
+--ipf5
+self.audioNode.setParamValue("/Greyhole/Mix/feedback", mem(5));
+--ipf6
+self.audioNode.setParamValue("/Greyhole/Mod/modDepth", mem(6));
+--ipf7
+self.audioNode.setParamValue("/Greyhole/Mod/modFreq", mem(7));
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/Greyhole/Mix/damping"));
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/Greyhole/Mix/damping"));
+--wi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/Greyhole/Mix/delayTime"));
+--dcwi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/Greyhole/Mix/delayTime"));
+--wi3
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/Greyhole/Mix/size"));
+--dcwi3
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/Greyhole/Mix/size"));
+--wi4
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/Greyhole/Mix/diffusion"));
+--dcwi4
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/Greyhole/Mix/diffusion"));
+--wi5
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/Greyhole/Mix/feedback"));
+--dcwi5
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/Greyhole/Mix/feedback"));
+--wi6
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/Greyhole/Mod/modDepth"));
+--dcwi6
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/Greyhole/Mod/modDepth"));
+--wi7
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/Greyhole/Mod/modFreq"));
+--dcwi7
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/Greyhole/Mod/modFreq"));
+#df GreyHole Faust Implementation
+#i1 Set damping [0-1]
+#i2 Set delayTime [0-60]
+#i3 Set room size [0.5-5]
+#i4 Set diffusion   [0-1]
+#i5 Set feedback   [0-1]
+#i6 Set modulation depth [0-1]
+#i6 Set modulation frequency [0-10]
+faust~moogvcf
+48
+--decl
+inp(7)
+outp(1)
+#standart Faust WASM implementation
+var pluginURL = 'sound/audioworklet/RIPFAUST/moog_vcf_demo/.';
+var plugin = new moog_vcf_demo(audioContext, pluginURL);
+var node = await plugin.load()
+self.audioNode = node;
+--ipf1
+self.audioNode.setParamValue("/MOOG_VCF__Voltage_Controlled_Filter_/Corner_Frequency", mem(1));
+--ipf2
+self.audioNode.setParamValue("/MOOG_VCF__Voltage_Controlled_Filter_/Corner_Resonance", mem(2));
+--ipf3
+self.audioNode.setParamValue("/MOOG_VCF__Voltage_Controlled_Filter_/VCF_Output_Level", mem(3));
+--ipf4
+self.audioNode.setParamValue("/MOOG_VCF__Voltage_Controlled_Filter_/0x00/Bypass", mem(4));
+--ipf5
+self.audioNode.setParamValue("/MOOG_VCF__Voltage_Controlled_Filter_/0x00/Use_Biquads", mem(5));
+--ipf6
+self.audioNode.setParamValue("/MOOG_VCF__Voltage_Controlled_Filter_/0x00/Normalized", mem(6));
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/MOOG_VCF__Voltage_Controlled_Filter_/Corner_Frequency"));
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/MOOG_VCF__Voltage_Controlled_Filter_/Corner_Frequency"));
+--wi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/MOOG_VCF__Voltage_Controlled_Filter_/Corner_Resonance"));
+--dcwi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/MOOG_VCF__Voltage_Controlled_Filter_/Corner_Resonance"));
+--wi3
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/MOOG_VCF__Voltage_Controlled_Filter_/VCF_Output_Level"));
+--dcwi3
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/MOOG_VCF__Voltage_Controlled_Filter_/VCF_Output_Level"));
+#df Moog VCF Faust Implementation
+#i1 Set Frequency [1-88]
+#i2 Set Resonnance [0-1]
+#i3 Set Level [-60-20]
+faust~flanger
+69
+--decl
+inp(7)
+outp(1)
+#standart Faust WASM implementation
+var pluginURL = 'sound/audioworklet/RIPFAUST/flanger_demo/.';
+var plugin = new flanger_demo(audioContext, pluginURL);
+var node = await plugin.load()
+self.audioNode = node;
+--ipf1
+self.audioNode.setParamValue("/FLANGER/0x00/Speed", mem(1));
+--ipf2
+self.audioNode.setParamValue("/FLANGER/0x00/Depth", mem(2));
+--ipf3
+self.audioNode.setParamValue("/FLANGER/0x00/Feedback", mem(3));
+--ipf4
+self.audioNode.setParamValue("/FLANGER/Delay_Controls/Flange_Delay", mem(4));
+--ipf5
+self.audioNode.setParamValue("/FLANGER/Delay_Controls/Delay_Offset", mem(5));
+--ipf6
+self.audioNode.setParamValue("/FLANGER/0x00/Flanger_Output_Level", mem(6));
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/FLANGER/0x00/Speed"));
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/FLANGER/0x00/Speed"));
+--wi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/FLANGER/0x00/Depth"));
+--dcwi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/FLANGER/0x00/Depth"));
+--wi3
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/FLANGER/0x00/Feedback"));
+--dcwi3
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/FLANGER/0x00/Feedback"));
+--wi4
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/FLANGER/Delay_Controls/Flange_Delay"));
+--dcwi4
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/FLANGER/Delay_Controls/Flange_Delay"));
+--wi5
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/FLANGER/Delay_Controls/Delay_Offset"));
+--dcwi5
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/FLANGER/Delay_Controls/Delay_Offset"));
+--wi6
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/FLANGER/0x00/Flanger_Output_Level"));
+--dcwi6
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/FLANGER/0x00/Flanger_Output_Level"));
+#df Flanger demo Faust Implementation
+#i1 Set Speed [0-10]
+#i2 Set Depth [0-1]
+#i3 Set Feedback [-1:1]
+#i4 Set Flange delay [0-20]
+#i5 Set Delay Offset [0-20]
+#i6 Set Level [-60:10]
+faust~eqdemo
+23
+# Could get array as input. or be set for any of its input? 
+--decl
+inp(21)
+outp(1)
+#standart Faust WASM implementation
+var pluginURL = 'sound/audioworklet/RIPFAUST/filterbank_demo/.';
+var plugin = new filterbank_demo(audioContext, pluginURL);
+var node = await plugin.load()
+self.audioNode = node;
+--code
+for ( var i = 1 ; i < 21; i++ ) {
+var parametername = "/CONSTANT-Q_FILTER_BANK__Butterworth_dyadic_tree_/0x00/";
+if ( i < 10 ) { parametername += "Band_"+i;}else{parametername += "Band"+i;}
+self.audioNode.setParamValue(parametername, mem(i))
+}
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+#df EQ 20-band Faust Implementation
+#i1 Pass array of numbers (decibels)
+d~
+22
+# [d~] delayed gain node
+#        
+#                      *      time
+#                      |      |  
+#                    [~        ]
+#                      |
+--decl
+inp(2)
+outp(1)
+self.audioNode =  audioContext.createDelay();
+--ipf1
+self.audioNode.delayTime.value = mem(1)
+--wi0
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+OnNodeConnect(wblock,self.audioNode.delayTime);
+--dcwi1
+OnNodeDisconnect(wblock,self.audioNode.delayTime);
+#df Delay audio signal
+#i1 Set delay time in milliseconds
+biquad~
+41
+--decl
+inp(6)
+outp(1)
+self.audioNode = audioContext.createBiquadFilter();
+self.audioNode.type = "lowpass";
+--ipf1
+self.audioNode .frequency.setValueAtTime(mem(1), audioContext.currentTime);
+--ipf2
+self.audioNode.Q.value = mem(2)
+--ipf3
+self.audioNode.gain.setValueAtTime(mem(3), audioContext.currentTime);
+--ipf4
+self.audioNode.detune.setValueAtTime(mem(4), audioContext.currentTime);
+--ipf5
+self.audioNode.type = mem(5)
+--wi0
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+OnNodeConnect(wblock,self.audioNode.frequency);
+--wi2
+OnNodeConnect(wblock,self.audioNode.Q);
+--wi3
+OnNodeConnect(wblock,self.audioNode.gain);
+--wi4
+OnNodeConnect(wblock,self.audioNode.detune);
+--dcwi1
+OnNodeDisconnect(wblock,self.audioNode.frequency);
+--dcwi2
+OnNodeDisconnect(wblock,self.audioNode.Q);
+--dcwi3
+OnNodeDisconnect(wblock,self.audioNode.gain);
+--dcwi4
+OnNodeDisconnect(wblock,self.audioNode.detune);
+#df Standart biquad filter
+#i1 Set frequency
+#i2 Set Resonnance
+#i3 Set Gain
+#i4 Set detune
+#i5 Set type [lowpass,highpass,bandpass,peaking,notch]
+stereo~
+16
+--decl
+inp(2)
+outp(1)
+self.audioNode = audioContext.createStereoPanner();
+--ipf1
+self.audioNode.pan.setValueAtTime(mem(1), audioContext.currentTime);
+--wi0
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+OnNodeConnect(wblock,self.audioNode.pan);
+--dcwi1
+OnNodeDisconnect(wblock,self.audioNode.pan);
+#df A simpler audio panner
+#i1 Apply panning [-1:1]
+mic~
+15
+--decl
+inp(1)
+outp(1)
+self.audioNode = audioContext.createGain();
+if ( microphone == null && navigator.mediaDevices){
+var stream = await navigator.mediaDevices.getUserMedia({"audio": true});
+microphone = audioContext.createMediaStreamSource(stream);
+}
+while (microphone == null ) {await wait(1000);}
+microphone.connect(self.audioNode)
+--wi0
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+OnNodeDisconnect(wblock,self.audioNode);
+#df Output audio signal from host microphone
+faust~revecho
+24
+--decl
+inp(2)
+outp(1)
+#standart Faust WASM implementation
+var pluginURL = 'sound/audioworklet/RIPFAUST/reverse_echo/.';
+var plugin = new reverse_echo(audioContext, pluginURL);
+var node = await plugin.load()
+self.audioNode = node;
+--ipf1
+self.audioNode.setParamValue("/reverse_echo/Log2_Delay_", mem(1));
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/reverse_echo/Log2_Delay_"));
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/reverse_echo/Log2_Delay_"));
+#df Reverse echo Faust Implementation
+#i1 Set log [5-16]
+faust~pitch
+42
+--decl
+inp(4)
+outp(1)
+#standart Faust WASM implementation
+var pluginURL = 'sound/audioworklet/RIPFAUST/pitchshifter/.';
+var plugin = new pitchshifter(audioContext, pluginURL);
+var node = await plugin.load()
+self.audioNode = node;
+--ipf1
+self.audioNode.setParamValue("/Pitch_Shifter/shift__semitones_", mem(1));
+--ipf2
+self.audioNode.setParamValue("/Pitch_Shifter/window__samples_", mem(2));
+--ipf3
+self.audioNode.setParamValue("/Pitch_Shifter/xfade__samples_", mem(3));
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/Pitch_Shifter/shift__semitones_"));
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/Pitch_Shifter/shift__semitones_"));
+--wi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/Pitch_Shifter/window__samples_"));
+--dcwi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/Pitch_Shifter/window__samples_"));
+--wi3
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/Pitch_Shifter/xfade__samples_"));
+--dcwi3
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/Pitch_Shifter/xfade__samples_"));
+#df Pitch shifter Faust Implementation
+#i1 Pitch semi-tones
+#i2 Samples [0-10000]
+#i3 XFade [0-10000]
+faust~comp
+60
+--decl
+inp(6)
+outp(1)
+#standart Faust WASM implementation
+var pluginURL = 'sound/audioworklet/RIPFAUST/compressor_demo/.';
+var plugin = new compressor_demo(audioContext, pluginURL);
+var node = await plugin.load()
+self.audioNode = node;
+--ipf1
+self.audioNode.setParamValue("/COMPRESSOR/0x00/Compression_Control/Ratio", mem(1));
+--ipf2
+self.audioNode.setParamValue("/COMPRESSOR/0x00/Compression_Control/Threshold", mem(2));
+--ipf3
+self.audioNode.setParamValue("/COMPRESSOR/0x00/Compression_Response/Attack", mem(3));
+--ipf4
+self.audioNode.setParamValue("/COMPRESSOR/0x00/Compression_Response/Release", mem(4));
+--ipf5
+self.audioNode.setParamValue("/COMPRESSOR/Makeup_Gain", mem(5));
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/COMPRESSOR/0x00/Compression_Control/Ratio"));
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/COMPRESSOR/0x00/Compression_Control/Ratio"));
+--wi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/COMPRESSOR/0x00/Compression_Control/Threshold"));
+--dcwi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/COMPRESSOR/0x00/Compression_Control/Threshold"));
+--wi3
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/COMPRESSOR/0x00/Compression_Response/Attack"));
+--dcwi3
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/COMPRESSOR/0x00/Compression_Response/Attack"));
+--wi4
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/COMPRESSOR/0x00/Compression_Response/Release"));
+--dcwi4
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/COMPRESSOR/0x00/Compression_Response/Release"));
+--wi5
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/COMPRESSOR/Makeup_Gain"));
+--dcwi5
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/COMPRESSOR/Makeup_Gain"));
+#df Faust Implementation of signal compressor
+#i1 Ratio in db[1-20]
+#i2 Treshold in db[-100:10]
+#i3 Attack in ms
+#i4 Release in ms
+#i5 Gain in db[-96:96]
+faust~freeverb
+51
+--decl
+inp(5)
+outp(1)
+#standart Faust WASM implementation
+var pluginURL = 'sound/audioworklet/RIPFAUST/freeverb/.';
+var plugin = new freeverb(audioContext, pluginURL);
+var node = await plugin.load()
+self.audioNode = node;
+--ipf1
+self.audioNode.setParamValue("/Freeverb/0x00/Damp", mem(1));
+--ipf2
+self.audioNode.setParamValue("/Freeverb/0x00/RoomSize", mem(2));
+--ipf3
+self.audioNode.setParamValue("/Freeverb/0x00/Stereo_Spread", mem(3));
+--ipf4
+self.audioNode.setParamValue("/Freeverb/Wet", mem(4));
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/Freeverb/0x00/Damp"));
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/Freeverb/0x00/Damp"));
+--wi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/Freeverb/0x00/RoomSize"));
+--dcwi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/Freeverb/0x00/RoomSize"));
+--wi3
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/Freeverb/0x00/Stereo_Spread"));
+--dcwi3
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/Freeverb/0x00/Stereo_Spread"));
+--wi4
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/Freeverb/Wet"));
+--dcwi4
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/Freeverb/Wet"));
+#df Freeverb module from Faust 
+#i1 Damp [0-1]
+#i2 Roomsize [0-1]
+#i3 Stereo dispersion [0-1]
+#i4 Wet [0-1]
+faust~phaser2
+87
+--decl
+inp(9)
+outp(1)
+#standart Faust WASM implementation
+var pluginURL = 'sound/audioworklet/RIPFAUST/phaser2/.';
+var plugin = new phaser2(audioContext, pluginURL);
+var node = await plugin.load()
+self.audioNode = node;
+--ipf1
+self.audioNode.setParamValue("/PHASER2/0x00/Speed", mem(1));
+--ipf2
+self.audioNode.setParamValue("/PHASER2/0x00/Notch_Depth__Intensity_", mem(2));
+--ipf3
+self.audioNode.setParamValue("/PHASER2/0x00/Feedback_Gain", mem(3));
+--ipf4
+self.audioNode.setParamValue("/PHASER2/0x00/Notch_width", mem(4));
+--ipf5
+self.audioNode.setParamValue("/PHASER2/0x00/Min_Notch1_Freq", mem(5));
+--ipf6
+self.audioNode.setParamValue("/PHASER2/0x00/Max_Notch1_Freq", mem(6));
+--ipf7
+self.audioNode.setParamValue("/PHASER2/0x00/Notch_Freq_Ratio:_NotchFreq_n+1_/NotchFreq_n_", mem(7));
+--ipf8
+self.audioNode.setParamValue("/PHASER2/0x00/Phaser_Output_Level", mem(8));
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/PHASER2/0x00/Speed"));
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/PHASER2/0x00/Speed"));
+--wi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/PHASER2/0x00/Notch_Depth__Intensity_"));
+--dcwi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/PHASER2/0x00/Notch_Depth__Intensity_"));
+--wi3
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/PHASER2/0x00/Feedback_Gain"));
+--dcwi3
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/PHASER2/0x00/Feedback_Gain"));
+--wi4
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/PHASER2/0x00/Notch_width"));
+--dcwi4
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/PHASER2/0x00/Notch_width"));
+--wi5
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/PHASER2/0x00/Min_Notch1_Freq"));
+--dcwi5
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/PHASER2/0x00/Min_Notch1_Freq"));
+--wi6
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/PHASER2/0x00/Max_Notch1_Freq"));
+--dcwi6
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/PHASER2/0x00/Max_Notch1_Freq"));
+--wi7
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/PHASER2/0x00/Notch_Freq_Ratio:_NotchFreq_n+1_/NotchFreq_n_"));
+--dcwi7
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/PHASER2/0x00/Notch_Freq_Ratio:_NotchFreq_n+1_/NotchFreq_n_"));
+--wi8
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/PHASER2/0x00/Phaser_Output_Level"));
+--dcwi8
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/PHASER2/0x00/Phaser_Output_Level"));
+#df Phaser implementation using notch filter
+#i1 Speed in hertz [0-10]
+#i2 Notch depth [0-1]
+#i3 Feedback gain [-1:0]
+#i4 Notch width [0-5000]
+#i5 Notch minimum frequency
+#i6 Notch maximum frequency
+#i7 Notch frequency ratio [1-4]
+#i8 Ouput level in db
+ob~bpf
+33
+--decl
+inp(3)
+outp(1)
+#standart Faust WASM implementation
+var pluginURL = 'sound/audioworklet/RIPFAUST/oberheimBPF/.';
+var plugin = new oberheimBPF(audioContext, pluginURL);
+var node = await plugin.load()
+self.audioNode = node;
+--ipf1
+self.audioNode.setParamValue("/oberheimBPF/freq", mem(1));
+--ipf2
+self.audioNode.setParamValue("/oberheimBPF/reso", mem(2));
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/oberheimBPF/freq"));
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/oberheimBPF/freq"));
+--wi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/oberheimBPF/reso"));
+--dcwi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/oberheimBPF/reso"));
+#df Oberheim band pass filter
+#i1 Set frequency normalized [0-1]
+#i2 Set resonnance [0-200]
+ob~hpf
+33
+--decl
+inp(3)
+outp(1)
+#standart Faust WASM implementation
+var pluginURL = 'sound/audioworklet/RIPFAUST/oberheimHPF/.';
+var plugin = new oberheimHPF(audioContext, pluginURL);
+var node = await plugin.load()
+self.audioNode = node;
+--ipf1
+self.audioNode.setParamValue("/oberheimHPF/freq", mem(1));
+--ipf2
+self.audioNode.setParamValue("/oberheimHPF/reso", mem(2));
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/oberheimHPF/freq"));
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/oberheimHPF/freq"));
+--wi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/oberheimHPF/reso"));
+--dcwi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/oberheimHPF/reso"));
+#df Oberheim high pass filter
+#i1 Set frequency normalized [0-1]
+#i2 Set resonnance [0-200]
+ob~lpf
+33
+--decl
+inp(3)
+outp(1)
+#standart Faust WASM implementation
+var pluginURL = 'sound/audioworklet/RIPFAUST/oberheimLPF/.';
+var plugin = new oberheimLPF(audioContext, pluginURL);
+var node = await plugin.load()
+self.audioNode = node;
+--ipf1
+self.audioNode.setParamValue("/oberheimLPF/freq", mem(1));
+--ipf2
+self.audioNode.setParamValue("/oberheimLPF/reso", mem(2));
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/oberheimLPF/freq"));
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/oberheimLPF/freq"));
+--wi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/oberheimLPF/reso"));
+--dcwi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/oberheimLPF/reso"));
+#df Oberheim low pass filter
+#i1 Set frequency normalized [0-1]
+#i2 Set resonnance [0-200]
+bang~
+18
+--decl
+inp(2)
+outp(1)
+await audioContext.audioWorklet.addModule("sound/audioworklet/audiobang.js");
+self.audioNode = new AudioWorkletNode(audioContext,"audio-bang-processor");
+self.audioNode.port.onmessage = (event) =>{self.OIO()}
+--code
+out0(0)
+--ipf1
+self.audioNode.parameters.get('exciter').value = mem(1)
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+#df Bang when signal amplitude above value
+#i1 Set value
+faust~cubicnl
+33
+--decl
+inp(3)
+outp(1)
+#standart Faust WASM implementation
+var pluginURL = 'sound/audioworklet/RIPFAUST/cubicnl/.';
+var plugin = new cubicnl(audioContext, pluginURL);
+var node = await plugin.load()
+self.audioNode = node;
+--ipf1
+self.audioNode.setParamValue("/CUBIC_NONLINEARITY_cubicnl/Drive", mem(1));
+--ipf2
+self.audioNode.setParamValue("/CUBIC_NONLINEARITY_cubicnl/Offset", mem(2));
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/CUBIC_NONLINEARITY_cubicnl/Drive"));
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/CUBIC_NONLINEARITY_cubicnl/Drive"));
+--wi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/CUBIC_NONLINEARITY_cubicnl/Offset"));
+--dcwi2
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/CUBIC_NONLINEARITY_cubicnl/Offset"));
+#df Cubic non-linear distorstion from Faust
+#i1 Set drive [0-1]
+#i2 Set harmonics offset [0-1]
+noise~
+13
+--decl
+inp(0)
+outp(1)
+await audioContext.audioWorklet.addModule("sound/audioworklet/noise.js");
+self.audioNode = new AudioWorkletNode(audioContext,"random-noise-processor");
+console.log("noise created!")
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+#df Output random audio signal
+clamp~
+12
+--decl
+inp(1)
+outp(1)
+await audioContext.audioWorklet.addModule("sound/audioworklet/clamp.js");
+self.audioNode = new AudioWorkletNode(audioContext,"audio-clamp-processor");
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+#df Clamp oscillator signal between 0 and 1
+cos~
+12
+--decl
+inp(1)
+outp(1)
+await audioContext.audioWorklet.addModule("sound/audioworklet/cos.js");
+self.audioNode = new AudioWorkletNode(audioContext,"audio-cos-processor");
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+#df Output cosine of 2PI * signal input
+sig~
+13
+--decl
+inp(1)
+outp(1)
+memset(2)
+await audioContext.audioWorklet.addModule("sound/audioworklet/sig.js");
+self.audioNode = new AudioWorkletNode(audioContext,"audio-sig-processor");
+--code
+self.audioNode.parameters.get("offset").setValueAtTime(mem(0), audioContext.currentTime);
+--ipf1 
+#wrapper for rename argument
+while (self.audioNode == null){ await wait(1000);}
+self.audioNode.parameters.get("offset").setValueAtTime(mem(1), audioContext.currentTime);
+#df Convert number to constant audio signal
+oscillo~
+25
+--decl
+inp(4)
+mem(1) = 600
+mem(2) = 10
+self.analyser = audioContext.createAnalyser();
+# connect it to something
+# set default parameters
+self.analyser.fftSize = 2048;
+self.bufferLength = self.analyser.frequencyBinCount;
+self.dataArray = new Uint8Array(self.bufferLength);
+self.On = true;
+# Record the object to sound visualizers object in sound.js
+AddOscilloToDraw(self)
+--ipf3
+self.On = !self.On
+--wi0
+while (self.analyser == null){ await wait(1000);}
+OnNodeConnect(wblock,self.analyser);
+--dcwi0
+while (self.analyser == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.analyser);
+#df Draw a signal on screen
+#i1 Screen size
+#i2 Line size
+#i3 On/Off
++~
+22
+# we should be able to directly write value...
+--decl
+inp(2)
+outp(1)
+await audioContext.audioWorklet.addModule("sound/audioworklet/add.js");
+self.audioNode = new AudioWorkletNode(audioContext,"audio-add-processor",{numberOfInputs: 2,numberOfOutputs: 1,});
+--ipf1
+while (self.audioNode == null){ await wait(1000);}
+self.audioNode.parameters.get("defaultvalue").setValueAtTime(mem(1), audioContext.currentTime);
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode,0,0);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode,0,0);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnectSpecific(wblock,self.audioNode,0,1);
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnectSpecific(wblock,self.audioNode,0,1);
+#df Add 2 audio signals
+*~
+22
+# we should be able to directly write value...
+--decl
+inp(2)
+outp(1)
+await audioContext.audioWorklet.addModule("sound/audioworklet/mul.js");
+self.audioNode = new AudioWorkletNode(audioContext,"audio-mul-processor",{numberOfInputs: 2,numberOfOutputs: 1,});
+--ipf1
+while (self.audioNode == null){ await wait(1000);}
+self.audioNode.parameters.get("defaultvalue").setValueAtTime(mem(1), audioContext.currentTime);
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode,0,0);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode,0,0);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnectSpecific(wblock,self.audioNode,0,1);
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnectSpecific(wblock,self.audioNode,0,1);
+#df Multiply 2 audio signals
+-~
+22
+# we should be able to directly write value...
+--decl
+inp(2)
+outp(1)
+await audioContext.audioWorklet.addModule("sound/audioworklet/sub.js");
+self.audioNode = new AudioWorkletNode(audioContext,"audio-sub-processor",{numberOfInputs: 2,numberOfOutputs: 1,});
+--ipf1
+while (self.audioNode == null){ await wait(1000);}
+self.audioNode.parameters.get("defaultvalue").setValueAtTime(mem(1), audioContext.currentTime);
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode,0,0);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode,0,0);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnectSpecific(wblock,self.audioNode,0,1);
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnectSpecific(wblock,self.audioNode,0,1);
+#df Sub 2 audio signals
+/~
+22
+# we should be able to directly write value...
+--decl
+inp(2)
+outp(1)
+await audioContext.audioWorklet.addModule("sound/audioworklet/div.js");
+self.audioNode = new AudioWorkletNode(audioContext,"audio-div-processor",{numberOfInputs: 2,numberOfOutputs: 1,});
+--ipf1
+while (self.audioNode == null){ await wait(1000);}
+self.audioNode.parameters.get("defaultvalue").setValueAtTime(mem(1), audioContext.currentTime);
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode,0,0);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode,0,0);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnectSpecific(wblock,self.audioNode,0,1);
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnectSpecific(wblock,self.audioNode,0,1);
+#df Divide 2 audio signals
+min~
+22
+# we should be able to directly write value...
+--decl
+inp(2)
+outp(1)
+await audioContext.audioWorklet.addModule("sound/audioworklet/min.js");
+self.audioNode = new AudioWorkletNode(audioContext,"audio-min-processor",{numberOfInputs: 2,numberOfOutputs: 1,});
+--ipf1
+while (self.audioNode == null){ await wait(1000);}
+self.audioNode.parameters.get("defaultvalue").setValueAtTime(mem(1), audioContext.currentTime);
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode,0,0);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode,0,0);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnectSpecific(wblock,self.audioNode,0,1);
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnectSpecific(wblock,self.audioNode,0,1);
+#df Ouput lesser signal
+max~
+22
+# we should be able to directly write value...
+--decl
+inp(2)
+outp(1)
+await audioContext.audioWorklet.addModule("sound/audioworklet/max.js");
+self.audioNode = new AudioWorkletNode(audioContext,"audio-max-processor",{numberOfInputs: 2,numberOfOutputs: 1,});
+--ipf1
+while (self.audioNode == null){ await wait(1000);}
+self.audioNode.parameters.get("defaultvalue").setValueAtTime(mem(1), audioContext.currentTime);
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode,0,0);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode,0,0);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnectSpecific(wblock,self.audioNode,0,1);
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnectSpecific(wblock,self.audioNode,0,1);
+#df Ouput loudest signal
+faust~phasor
+24
+--decl
+inp(3)
+outp(1)
+#standart Faust WASM implementation
+var pluginURL = 'sound/audioworklet/RIPFAUST/phasor/.';
+var plugin = new phasor(audioContext, pluginURL);
+var node = await plugin.load()
+self.audioNode = node;
+--ipf1
+self.audioNode.setParamValue("/phasor/freq", mem(1));
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("/phasor/freq"));
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("/phasor/freq"));
+#df Faust implementation of Phasor
+#i1 Set Frequency
+phasor~
+22
+--decl
+inp(2)
+outp(1)
+await audioContext.audioWorklet.addModule("sound/audioworklet/phasor.js");
+self.audioNode = new AudioWorkletNode(audioContext,"phasor-processor");
+--ipf1
+while (self.audioNode == null){ await wait(1000);}
+self.audioNode.parameters.get("frequency").setValueAtTime(mem(1), audioContext.currentTime);
+--wi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode);
+--wi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeConnect(wblock,self.audioNode.parameters.get("frequency"));
+--dcwi1
+while (self.audioNode == null){ await wait(1000);}
+OnNodeDisconnect(wblock,self.audioNode.parameters.get("frequency"));
+#df Linear ramp audio signal
+#i1 Set frequency
+line~
+24
+# [line~] ramp signal value over time 
+#        
+#                      
+#                      |        
+#                    [line~        ]
+#                      |
+--decl
+inp(1)
+outp(1)
+self.audioNode =  audioContext.createGain();
+self.audioNode.gain.value = 0;
+--code
+mem(0) = mem(0).split(' ')
+var t = parseFloat(mem(0)[1]) / 1000
+self.audioNode.gain.linearRampToValueAtTime(parseFloat(mem(0)[0]), audioContext.currentTime + t);
+self.audioNode.value= 1
+--ipf1
+self.audioNode.gain.value = mem(1)
+--wi0
+OnNodeConnect(wblock,self.audioNode);
+--dcwi0
+OnNodeDisconnect(wblock,self.audioNode);
+#df Ramp signal over time
+#i0 A packed-string containing amplitude to reach and time as ms
+adsr~
+28
+--decl
+inp(6)
+outp(1)
+await audioContext.audioWorklet.addModule("sound/audioworklet/sig.js");
+self.audioNode = new AudioWorkletNode(audioContext,"audio-sig-processor");
+self.audioNode.parameters.get("offset").setValueAtTime(1, audioContext.currentTime);
+--code
+var t = audioContext.currentTime;
+var peak = mem(1)
+var sus   = mem(1) * (mem(4)/100)
+if (mem(0) > 0) {
+# should I use set value at time 0 here ?
+t+= parseFloat(mem(2)) / 1000
+self.audioNode.parameters.get("offset").linearRampToValueAtTime(peak, t);
+t+= parseFloat(mem(3)) / 1000
+self.audioNode.parameters.get("offset").linearRampToValueAtTime(sus, t);
+}else{
+t+= parseFloat(mem(5)) / 1000
+self.audioNode.parameters.get("offset").linearRampToValueAtTime(0, t);
+}
+# Use Sig to create the default sound.
+#df Fast implementation of standart ADSR enveloppe
+#i0 Trigger attack if above 0 else trigger release
+#i1 Peak level
+#i2 Attack time in ms
+#i3 Decay time in ms
+#i4 Sustain level as pourcentage of peak level
+#i5 Release time in ms

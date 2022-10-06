@@ -13,13 +13,34 @@ function GetDefaultToolMap()
 
 function SetUpFileMap()
 {
+     var egA = new Array();
+     egA.push(new MapItem("hello world",null, "LoadExampleProject('basic/hello world.map')" ));
+    egA.push(new MapItem("simple logic",null, "LoadExampleProject('basic/logic.map')" ));
+    egA.push(new MapItem("simple clock",null, "LoadExampleProject('basic/clock.map')" ));
+    egA.push(new MapItem("list",null, "LoadExampleProject('basic/array.map')" ));
+     egA.push(new MapItem("warping",null, "LoadExampleProject('basic/global passing.map')" ));
+    egA.push(new MapItem("polymorphism",null, "LoadExampleProject('basic/virtual.map')" ));
+    egA.push(new MapItem("tab example",null, "LoadExampleProject('basic/tab.map')" ));
+   
+     var egB = new Array();
+    egB.push(new MapItem("simple FM",null, "LoadExampleProject('sound/simple fm.map')" ));
+    egB.push(new MapItem("lfo",null, "LoadExampleProject('sound/lfo.map')" ));
+    egB.push(new MapItem("enveloppe",null, "LoadExampleProject('sound/adsr.map')" ));
+    egB.push(new MapItem("simple echo",null, "LoadExampleProject('sound/simple echo.map')" ));
+    egB.push(new MapItem("simple flanger",null, "LoadExampleProject('sound/simple flanger.map')" ));
+    egB.push(new MapItem("arpegiator",null, "LoadExampleProject('sound/arpegiator.map')" ));
+    egB.push(new MapItem("midi example",null, "LoadExampleProject('sound/midi example.map')" ));
+    egB.push(new MapItem("FM poly synth",null, "LoadExampleProject('sound/dx algo8.map')" ));
+    
+    var egC = new Array();
+    egC.push(new MapItem("simple drawer",null, "LoadExampleProject('visual/simple drawer.map')" ));
+    egC.push(new MapItem("3D",null, "LoadExampleProject('visual/3D.map')" ));
+    
+    
      var EXContent = new Array();
-     EXContent.push(new MapItem("simple drawer",null, "LoadExampleProject('simple drawer')" ));
-     EXContent.push(new MapItem("simple logic ",null, "LoadExampleProject('simple logic')"));
-     EXContent.push(new MapItem("blockchain demo",null, "LoadExampleProject('blockchain demo')"));
-     EXContent.push(new MapItem("dummy synth",null, "LoadExampleProject('midi synth demo')"));
-     EXContent.push(new MapItem("graph example",null, "LoadExampleProject('graph demo')"));
-     EXContent.push(new MapItem("tab example",null, "LoadExampleProject('tab demo')"));
+     EXContent.push(new MapItem("basic",egA, "", ));
+     EXContent.push(new MapItem("audio",egB, ""));
+     EXContent.push(new MapItem("graphic",egC, ""));
     
      var SAVEASContent = new Array();
      SAVEASContent.push(new MapItem(".lib",null, "SaveLibraryAsTextFile();", ));
@@ -119,8 +140,14 @@ function SetUpW3Map()
 }
 function SetUpHelpMap()
 {
+    var excontent = new Array();
+    excontent.push(new MapItem("vanilla.lib", null, "Documentation.OpenClose('vanilla.lib')"));
+    excontent.push(new MapItem("audio.lib", null, "Documentation.OpenClose('audio.lib');"));
+    excontent.push(new MapItem("graphic.lib", null, "Documentation.OpenClose('graphic.lib')"));
+    excontent.push(new MapItem("web3.lib", null, "Documentation.OpenClose('web3.lib')"));
+    
     var maincontent = new Array();
-    maincontent.push(new MapItem("library                     [$]", null, "Documentation.OpenClose()"));
+    maincontent.push(new MapItem("library                     [$]", excontent, ""));
     maincontent.push(new MapItem("git", null, "window.open('https://github.com/gggraph/p-graph', '_blank');"));
     maincontent.push(new MapItem("mouse calibration", null, "CreateMouseAccuracyCanvas()"));
     maincontent.push(new MapItem("about", null, "prompt.AddEventText('PGRAPH ver 0.02 [05.09.2022]')"));

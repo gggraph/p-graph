@@ -1,7 +1,8 @@
-
+// Should allow renaming windows... 
+// When db click. It should allow blinking text. & draw continuously. 
 class WinExplorer extends Onglets
 {
-  
+    
     Stroke()
     {
         var g = this.Canvas.context;
@@ -46,11 +47,16 @@ class WinExplorer extends Onglets
         if ( IsVectorInsideBox(new Vector2(mouseX - this.eventObject.Canvas.box.x, mouseY - this.eventObject.Canvas.box.y), new Box(x,0,this.eventObject.Canvas.box.h,this.eventObject.Canvas.box.h-1)))
         {
             this.plushl = true;
-            Editor.AddNewWindow("win "+Editor.Windows.length);
+            Editor.AddNewWindow("win"+Editor.Windows.length);
             
         }
         else
             this.plushl = false;
+    }
+    // @  --> From Key Event
+    OnDoubleClick() 
+    {
+        // We need some blinking mechanism so we should constantly refreshing Draw() fonction... example : eval("while())
     }
     Draw()
     {
@@ -133,11 +139,12 @@ class PatchEditor
         this.Windows = new Array();
         this.WindowExplorer = new WinExplorer();
         this.AddNewWindow("default");
-        
+        this.PatchInstances = new Array();
         // @ Play Mode system
         this.inPlayMode = false;
         // @ Set up events 
-        this.Canvas.general.addEventListener('mousedown', function(e){SetFocusOnEditor()});
+        this.Canvas.general.addEventListener('mousedown', SetFocusOnEditor ,false);
+        //this.Canvas.general.addEventListener('mouseup', this.OnMouseUp,false);
         this.Canvas.general.addEventListener('keydown', this.OnKeyDown, false);
         this.Canvas.general.addEventListener('dblclick',this.OnDoubleClick);
         
@@ -158,6 +165,7 @@ class PatchEditor
         this.TryResizing();
         this.ProccessPatchBlocks();
         this.PrintInfo();
+        this.ProccessSelection();
     }
     SetPlayMode()
     {
@@ -201,7 +209,7 @@ class PatchEditor
             ResizeScreenEditorRatio(mouseX);
         }
     }
-    
+
     ProccessPatchBlocks()
     {
          var _g = this.Canvas.context;
@@ -219,6 +227,8 @@ class PatchEditor
             {
                  Blocks[i].Draw();
                  Blocks[i].Interact();
+                 if ( this.SelectionBox != null )
+                     Blocks[i].selected = IsBoxInsideBox(Blocks[i].bodyBox, this.SelectionBox)
             }
 
         }
@@ -259,6 +269,10 @@ class PatchEditor
             return true;
         }
     }
+    CloseWindow(windowName)
+    {
+        this.WindowExplorer.CloseThumbnail(windowName);
+    }
     OpenAllWindows()
     {
         var i; 
@@ -269,9 +283,29 @@ class PatchEditor
     }
     CloseAllWindows()
     {
+         this.WindowExplorer.Thumbnails = new Array();
+         this.AddNewWindow("default");
+    }
+    DestroyAllWindows()
+    {
+         // Close documentation
+         Documentation.Close();
+         // If IDE is defined...
+         ide.CloseAllTabs();
+         // Destroy all Blocks
+         for ( var i = 0 ; i < Blocks.length; i++ )
+             Blocks[i].Destroy();
+         Blocks = new Array();
          this.Windows = new Array();
          this.WindowExplorer.Thumbnails = new Array();
          this.AddNewWindow("default");
+    }
+    DestroyWindow(windowname)
+    {
+        DestroyAllBlocksInWindow(windowname);
+        this.CloseWindow(windowname);
+        var idx = this.Windows.indexOf(windowname);
+        if ( idx > -1 ){ this.Windows.splice(idx,1)}
     }
     GetEmptyWindow()
     {
@@ -290,7 +324,7 @@ class PatchEditor
                     return this.Windows[i];
             }
         }
-        return "win "+this.Windows.length;
+        return "win"+this.Windows.length;
     }
     
     
@@ -311,7 +345,7 @@ class PatchEditor
                 var n;
                 for (n=0; n < Blocks[i].outputsboxes.length; n++)
                 {
-                    if (IsMouseInsideBox(Blocks[i].outputsboxes[n], this.Canvas)) // could also work in other screen ...
+                    if (IsMouseInsideBox(Blocks[i].outputsboxes[n], block.displayCanvas)) 
                     {
                         return new Array(i,n);
                     }
@@ -322,7 +356,7 @@ class PatchEditor
                 var n;
                 for (n=0; n < Blocks[i].inputsboxes.length; n++)
                 {
-                    if (IsMouseInsideBox(Blocks[i].inputsboxes[n], this.Canvas))
+                    if (IsMouseInsideBox(Blocks[i].inputsboxes[n], block.displayCanvas))
                     {
                         return new Array(i,n);
                     }
@@ -362,20 +396,113 @@ class PatchEditor
             }
                 
         }
-        // or create new block if N
-        if ( e.keyCode == 78)
-        { 
-           CreateNewBlock();
-        }
-        // OR HIDE UNHIDE IDE
-        if ( e.keyCode == 13 )
+        // Some short keys here : 
+        // [N]                  Create new block
+        // [ENTER]              Hide/Show Editor
+        // [I]                  Create number block
+        // [K]                  Create knob block
+        // [CTRL+C]             Copy Selected block 67
+        // [CTRL+V]             Paste Selected blocks. 86
+        // [CTRL+X]             use window def (88)
+        // [P]                  Switch betwwen play mode/ edition mode 
+        //console.log(e.keyCode);
+        switch ( e.keyCode)
         {
-            if ( ide.hide)
-                ide.UnHide();
-            else
-                ide.Hide();
+            case 67: if ( ctrlPressed){Editor.CopySelection()}break;
+            case 86: if (ctrlPressed){Editor.PasteSelection()}break;
+            case 88: if (ctrlPressed) {Editor.CopySelection(true)}break;
+            case 46: Editor.DestroySelection(); break;
+            case 78:  CreateNewBlock();break;
+            case 13: if ( ide.hide){ide.UnHide()}else{ide.Hide();}break;
         }
-    }    
+       
+    }
+    ProccessSelection()
+    {
+        // Check if we can start selection 
+        if ( mousepressed )
+        {
+            if ( this.SelectionBox == null )
+            {
+                if ( UserIsGrabbing || UserIsTyping || UserIsWiring)
+                    return;
+                UserIsGrabbing = true;
+                this.SelectionBox = new Box(mouseX - this.Canvas.box.x, mouseY- this.Canvas.box.y, 0, 0);
+                return;    
+            }
+            this.SelectionBox.w = (mouseX-this.Canvas.box.x) -this.SelectionBox.x ;
+            this.SelectionBox.h = (mouseY-this.Canvas.box.y) -this.SelectionBox.y;
+            // @ Update selection UI
+            // @ Stroke square at selection...
+            var _g = this.Canvas.context;
+            _g.lineWidth = 1;
+            _g.strokeStyle = VisualParameters.BlockStrokeColor;
+            _g.strokeRect(this.SelectionBox.x, this.SelectionBox.y, this.SelectionBox.w, this.SelectionBox.h);            
+        }
+        else
+        {
+            if ( this.SelectionBox == null )
+                return;
+            //@ Do something here where selection
+            UserIsGrabbing = false;
+            this.SelectionBox= null;
+        }
+        
+    }
+    // Selection can be grabbed all at once. Can be copy etc. 
+    
+    CopySelection(cut=false) 
+    {
+        this.SelectedBlocks = new Array();
+        for ( var i = 0 ; i < Blocks.length; i++ )
+        {
+            if ( Blocks[i].selected)
+            {
+                this.SelectedBlocks.push(Blocks[i]);
+                if ( cut)
+                    Blocks[i].Window = "presspaper";
+            }
+                
+        }
+        // signal it
+        prompt.AddEventText(this.SelectedBlocks.length + " blocks copied...")
+    }
+    DestroySelection()
+    {
+        this.SelectedBlocks = new Array();
+        for ( var i = Blocks.length-1 ; i >= 0 ; i-- )
+        {
+            if ( Blocks[i].selected)
+                Blocks[i].Destroy();
+        }
+    }
+    PasteSelection()
+    {
+        // Copy to current window all selected blocks...
+        if ( this.SelectedBlocks == null)
+            return;
+        var copied = CopyCreateGroupOfBlocks(this.SelectedBlocks, new Vector2(mouseX, mouseY),
+                                Editor.WindowExplorer.Thumbnails[0], Editor.Canvas);
+        for ( var i = 0 ; i < copied.length ; i++)
+            copied[i].selected = true;
+        if ( this.SelectedBlocks[0].Window == "presspaper")
+        {
+            for ( var i = 0 ; i < this.SelectedBlocks.length; i++ )
+            {
+                this.SelectedBlocks[i].Destroy();
+            }
+        }
+        // also selected new blocks copied...
+        this.SelectedBlocks = null;
+    }
+    OnMouseDown(e)
+    {
+        SetFocusOnEditor();
+    }
+    OnMouseUp(e)
+    {
+       
+    }
     
 }
 
@@ -404,6 +531,7 @@ onkeydown = function(e)
     { 
        shftPressed = true;
     } 
+    e.preventDefault();
 }
 onkeyup = function(e){
    
@@ -415,13 +543,7 @@ onkeyup = function(e){
     { 
        shftPressed = false;
     }
-    if ( e.keyCode == 164)
-    {
-        if  (!UserReadLibrary)
-            OpenDoc();
-        else
-            CloseDoc();
-    }
+   
 };
 // General user interaction info
 

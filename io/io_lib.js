@@ -1,17 +1,24 @@
 // IO
 async function LoadUpdatedLib()
 {
-    $.ajax({
-        url : "example/vanilla.lib",
+    await LoadLibFile("vanilla.lib")
+    await LoadLibFile("audio.lib")
+    await LoadLibFile("graphic.lib")
+    await LoadLibFile("web3.lib")
+        
+}
+async function LoadLibFile(name)
+{
+     $.ajax({
+        url : "example/"+name,
         dataType: "text",
         async:false,
         success : function (data) 
         {
             var txt = data.toString().split("\r\n");
-            LoadLibraryFromTextFile(txt);
+            LoadLibraryFromTextFile(txt, name);
         }
         });
-        
 }
 function GetLibraryDataAsText()
 {
@@ -39,7 +46,7 @@ function SaveLibraryAsTextFile()
     prompt.AddEventText("saving .lib")
 }
 
-function LoadLibraryFromTextFile(text)
+function LoadLibraryFromTextFile(text, file = "")
 {
     // Load All Entries as text file
     if ( !importing)
@@ -62,7 +69,7 @@ function LoadLibraryFromTextFile(text)
         }
         //@ find conflicting library if typename already exists in library
         if ( !IsEntryAlreadyExists(tname))
-            Library.push(new LibraryEntry(tname,sc));  
+            Library.push(new LibraryEntry(tname,sc, file));  
     }
     //@ refresh all blocks code
     var i; 

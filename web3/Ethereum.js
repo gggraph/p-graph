@@ -49,7 +49,7 @@ class EthereumNetWork
     {
         var latest = await this.module.eth.getBlock('latest')
         this.block = latest;
-        console.log(latest);
+       
         //this.chainlength = this.block.level;
         return this.block;
     }

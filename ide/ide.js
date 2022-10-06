@@ -85,6 +85,7 @@ class IDE
     {
         if (bloc == null )
             return;
+        
         // Add bloc to thumbnail
         this.CodeExplorer.AddThumbnail(bloc)
         
@@ -126,6 +127,12 @@ class IDE
     }
     CloseAllTabs()
     {
+        this.CodeExplorer.Thumbnails = new Array();
+        this.CodeExplorer.Draw();
+        this.CodeEditor.Text = [""];
+        this.CodeEditor.Draw();
+        this.CodeEditor.SetCursor(0,0);
+        return;
         for (var i = 0; i < this.CodeExplorer.Thumbnails.length; i++)
             this.TryCloseBlock( this.CodeExplorer.Thumbnails[i] );
     }

@@ -1,6 +1,6 @@
-96
+58
 bang
-11
+9
 # [bang] pass value when clicked 
 #                      |
 #                    [bang]
@@ -10,10 +10,8 @@ inp(1); outp(1)
 --code
 out0(0)
 #df  Pass a value when user click on it
-#i0  Call
-#o0 Out
 clock
-16
+14
 # [clock] output its message after one second
 #         
 #                     *   
@@ -28,47 +26,6 @@ await wait(1000)
 out0(0)
 #
 #df Pass a value one second later
-#i0  Call
-#o0 Out
-color
-20
-# [color] set color for [pix] [fill] 
-#            and other graphics box
-#
-#                  *  r  g b
-#                  |  |  |  |
-#                [   color  ]
-#                  |                  
---decl
-inp(4)
-outp(1)
---code
-OutputCanvas.SetColor(mem(1),mem(2),mem(3))
-out0(0)
-#
-#df Set color for next graphic commands
-#i0 Call
-#i1 Set red value between [0-255]
-#i2 Set green value between [0-255]
-#i3 Set blue value between [0-255]
-#o0 Out
-fill
-15
-# [fill] clear display with current color 
-#        
-#                      |
-#                    [fill]
-#                      |                      
---decl
-inp(1)
-outp(1)
---code
-OutputCanvas.Fill()
-out0(0)
-#
-#df Fill the screen with current color
-#i0 Call
-#o0 Out
 inc
 17
 # [inc] increment its memory every time 
@@ -86,11 +43,11 @@ mem(1)+=1;
 out0(1);
 #df Increment number each call 
 #i0 Call
-#i1 Set number
+#i1 Store number
 #o0 Out
-log
+print
 12
-# [log] print its memory to browser
+# [print] print its memory to browser
 #         console
 #
 #                      |
@@ -102,43 +59,16 @@ inp(1);outp(0);
 console.log(mem(0))
 #df  Output value to browser console
 #i0  Call
-pix
-16
-# [pix] print a pixel on screen at position x and y
-#       
-#                *  x   y
-#                |  |   |
-#               [pix      ]
-#                |
-#
+%
+9
 --decl
-inp(3); outp(1)
+inp(2); outp(1);
 --code
-OutputCanvas.SetPixel(mem(1),mem(2))
-#df Print a pixel on screen
-#i0 Call
-#i1 Set x position
-#i2 Set y position
-#o0 Out
-pen
-18
-# [pen] set resolution of screen pixel 
-#          printing command
-#
-#                  *  res 
-#                  |   |   
-#               [pen    ]
-#                |
-#
---decl
-inp(2)
-outp(1)
---code
-ScreenCanvas.SetPenWidth(mem(1))
+mem(0) = mem(0) % mem(1)
 out0(0)
-#df Set size for next pixels and lines graphics command
-#i0 Call
-#i1 Set size
+#df Ouput modulo of two numbers
+#i0 Set first number and call 
+#i1 Set second number 
 #o0 Out
 pipe
 17
@@ -160,22 +90,25 @@ out0(0)
 #i1 Set delay as milliseconds
 #o0 Out
 slider
-8
+9
 # [slider] outputs integer with
 #             special interaction
 --decl
-inp(1); outp(1);
+inp(1); outp(1); memset(3);
+mem(2) = 200
 --code
 out0(0)
 #i0 Call
 #o0 Out
 knob
-9
+11
 # [knob] outputs integer with
 #             special interaction
 --decl
 inp(1)
 outp(1)
+memset(3)
+mem(2)=200
 --code
 out0(0)
 #i0 Call
@@ -265,8 +198,17 @@ out0(0)
 #i1 Set minimum
 #i2 Set maximum
 #o0 Out
-metro
-0
+**
+9
+--decl
+inp(2); outp(1);
+--code
+mem(0) = mem(0) ** mem(1)
+out0(0)
+#df Output power of two numbers
+#i0 Set first number and call 
+#i1 Set second number 
+#o0 Out
 +
 9
 --decl
@@ -380,85 +322,14 @@ out0(0)
 #df Out one
 #i0 Call 
 #o0 Out
-hashmux32
-77
-# [hashmux32] output 32 values between 0 and 255
-#                     from a hash string
-#
-#             |
-#         [hashmux32                               ]
-#             ||||||||||||||||||||||||||||||||
+sqrt
+6
 --decl
-inp(1)
-outp(32)
-memset(32)
+inp(1); outp(1);
 --code
-mem(0) = HashMux32(mem(0))
-mem(1) = mem(0)[1]
-mem(2) = mem(0)[2]
-mem(3) = mem(0)[3]
-mem(4) = mem(0)[4]
-mem(5) = mem(0)[5]
-mem(6) = mem(0)[6]
-mem(7) = mem(0)[7]
-mem(8) = mem(0)[8]
-mem(9) = mem(0)[9]
-mem(10) = mem(0)[10]
-mem(11) = mem(0)[11]
-mem(12) = mem(0)[12]
-mem(13) = mem(0)[13]
-mem(14) = mem(0)[14]
-mem(15) = mem(0)[15]
-mem(16) = mem(0)[16]
-mem(17) = mem(0)[17]
-mem(18) = mem(0)[18]
-mem(19) = mem(0)[19]
-mem(20) = mem(0)[20]
-mem(21) = mem(0)[21]
-mem(22) = mem(0)[22]
-mem(23) = mem(0)[23]
-mem(24) = mem(0)[25]
-mem(26) = mem(0)[26]
-mem(27) = mem(0)[27]
-mem(28) = mem(0)[28]
-mem(29) = mem(0)[29]
-mem(30) = mem(0)[30]
-mem(31) = mem(0)[31]
-mem(0) = mem(0)[0]
+mem(0) = Math.sqrt(mem(0))
 out0(0)
-out1(1)
-out2(2)
-out3(3)
-out4(4)
-out5(5)
-out6(6)
-out7(7)
-out8(8)
-out9(9)
-out10(10)
-out11(11)
-out12(12)
-out13(13)
-out14(14)
-out15(15)
-out16(16)
-out17(17)
-out18(18)
-out19(19)
-out20(20)
-out21(21)
-out22(22)
-out23(23)
-out24(24)
-out25(25)
-out26(26)
-out27(27)
-out28(28)
-out29(29)
-out30(30)
-out31(31)
-#df Out 32 values between [0-255] from a hash
-#i0 Hash
+#df Output square root of a number
 int
 7
 --decl
@@ -469,118 +340,24 @@ mem(0)=parseInt(mem(0))
 out0(0)
 #df Convert string to integer
 str
-0
-loadblock
-17
-# [loadblock] load a block at index in its internal memory 
-#             then outputs it
-#
-#               index
-#            |    |
-#         [loadblock] 
-#              |
---decl
-inp(2)
-outp(1)
---code
-mem(0) = await Network.LoadBlockAtIndex(mem(1))
-out0(0)
-#df Output a blockchain block object
-#i0 Call 
-#i1 Set blockchain block index
-#o0 Out
-chainheight
-15
-# [chainheight] outputs blockchain length when triggered
-#               as number
-#
-#               |
-#         [chainheight]
-#               |
+7
 --decl
 inp(1)
 outp(1)
 --code
-mem(0) = await Network.GetBlockchainLength()
+mem(0)=mem(0).toString()
 out0(0)
-#df Ouput current blockchain height
-#i0 Call 
-#o0 Out
-blockhash
-16
-# [blockhash] output hash of a block as a string
-#
-#            block 
-#              |    
-#         [blockhash] 
-#              |
---decl
-inp(1)
-outp(1)
---code
-if ( mem(0).hash != 'undefined'){Network.SetInternalBlock(mem(0));}
-mem(0) = Network.GetBlockHash();
-out0(0)
-#df Output hash of a blockchain block object
-#i0 Block
-#o0 Out
-blocktime
-17
-# [blocktime] output timestamp of a block as UNIX 
-#	      timestamp
-#
-#            block 
-#              |    
-#         [blocktime] 
-#              |
---decl
-inp(1)
-outp(1)
---code
-if ( mem(0).timestamp != 'undefined'){Network.SetInternalBlock(mem(0));}
-mem(0) = Network.GetBlockTimeStamp();
-out0(0)
-#df Output unix timestamp of a blockchain block object
-#i0 Block
-#o0 Out
-blockheight
-17
-# [blockheight] output height of a block
-#	        
-#
-#            block 
-#              |    
-#         [blockheight] 
-#              |
---decl
-inp(1)
-outp(1)
---code
-if ( mem(0).timestamp != 'undefined'){Network.SetInternalBlock(mem(0));}
-mem(0) = Network.GetBlockIndex();
-out0(0)
-#df Output height of a blockchain block object
-#i0 Block
-#o0 Out
-hashlerp
-15
-# [hashlerp] lerp hash value between 0 and 1
-#                
-#
-#               |
-#         [hashlerp  ]
-#               |
---decl
-inp(1)
-outp(1)
---code
-mem(0) = LerpHash(mem(0))
-out0(0)
-#df Output a value between [0-1] from a hash
-#i0 Hash
-#o0 Out
+#df Convert value to string
 sel
-0
+8
+#df Output to one of its wire out if value received correspond
+--decl
+inp(1)
+outp(1)
+--code
+for ( var i = 1 ; i < self.memory.length; i++){
+if(self.memory[i] == mem(0)){self.O(i,i)}
+}
 gate
 15
 # [gate]  pass or block routine 
@@ -599,15 +376,13 @@ if (mem(1)==0){out0(0);}
 #i1 Set number
 #o0 Out
 onload
-10
+8
 # [onload] bang when project open
 #                      
 #                    [onload]
 #                      |
 --decl
 inp(0); outp(1)
---code
-out0(0)
 #df Call when project load
 #o0 Out
 dec
@@ -629,198 +404,68 @@ out0(1);
 #i0 Call
 #i1 Set number
 #o0 Out
-sin~
-19
-# [sin~]  outputs a sine wave
-#        
-#                      *    freq  length
-#                      |    |       |
-#                    [sin~         ]
-#                      |
+tan
+6
 --decl
-inp(3)
-outp(1)
-mem(1)=800
-mem(2)=0.1
+inp(1); outp(1);
 --code
-mem(0) = new Wave("sine",mem(1),mem(2))
+mem(0) = Math.tan(mem(0))
 out0(0)
-#df Ouput a sine wave
-#i0 Call
-#i1 Set frequency
-#i2 Set tone length in milliseconds
-#o0 Out
-sqr~
-19
-# [sqr~]  outputs a square wave
-#        
-#                      *    freq  length
-#                      |    |       |
-#                    [sqr~         ]
-#                      |
---decl
-inp(3)
-outp(1)
-mem(1)=800
-mem(2)=0.1
---code
-mem(0) = new Wave("square",mem(1),mem(2))
-out0(0)
-#df Ouput a square wave
-#i0 Call
-#i1 Set frequency
-#i2 Set tone length in milliseconds
-#o0 Out
-tri~
-19
-# [tri~]  outputs a triangle wave
-#        
-#                      *    freq  length
-#                      |    |       |
-#                    [tri~         ]
-#                      |
---decl
-inp(3)
-outp(1)
-mem(1)=800
-mem(2)=0.1
---code
-mem(0) = new Wave("triangle",mem(1),mem(2))
-out0(0)
-#df Ouput a triangle wave
-#i0 Call
-#i1 Set frequency
-#i2 Set tone length in milliseconds
-#o0 Out
-saw~
-19
-# [saw~]  outputs a sawtooth wave
+#df Output tangent of a number
+linear
+25
+# [linear] linear ramping to value 
 #       
-#                      *    freq  length
-#                      |    |       |
-#                    [saw~         ]
+#                      value    time
+#                      |          |
+#                    [linear      ]
 #                      |
 --decl
-inp(3)
+inp(2)
 outp(1)
-mem(1)=800
-mem(2)=0.1
+memset(5)
 --code
-mem(0) = new Wave("sawtooth",mem(1),mem(2))
+if (mem(3) == true){mem(4)  = 0;return;}
+mem(3) = true;
+mem(4)  = 0
+while ( mem(4) <= mem(1)) {
+var amt = mem(4) / mem(1)
+mem(2) = (1-amt )*mem(2)+amt*mem(0)
+out0(2)
+await wait(10)
+mem(4)+=0.001
+}
+mem(3) = false;
+#df Ramp to value
+#i0 Set target value
+#i1 Set speed
+log
+6
+--decl
+inp(1); outp(1);
+--code
+mem(0) = Math.log(mem(0))
 out0(0)
-#df Ouput a sawtooth wave
-#i0 Call
-#i1 Set frequency
-#i2 Set tone length in milliseconds
-#o0 Out
-env~~
-18
-# [env~~]  set enveloppe of wave
-#       
-#                      w    a  s  r
-#                      |    |   |  |
-#                    [env~~         ]
-#                      |
---decl
-inp(4)
-outp(1)
---code
-mem(0).SetEnvelope(mem(1),mem(2),mem(3))
-out0(0)
-#df Set enveloppe of a sound wave
-#i0 Sound wave
-#i1 Set attack length in milliseconds
-#i2 Set sustain length in milliseconds
-#i3 Set release length in milliseconds
-#o0 Out
-vib~~
-17
-# [vib~~]  set sine lfo on wave
-#       
-#                      w    f  w  
-#                      |    |   | 
-#                    [vib~~        ]
-#                      |
---decl
-inp(3)
-outp(1)
---code
-mem(0).SetVibrato(mem(1),mem(2))
-out0(0)
-#df Apply vibrato to a sound wave
-#i0 Sound wave
-#i1 Set frequency modulation
-#i2 Set wet value
-#o0 Out
-del~
-16
-# [del~]  pass delay parameters on audio
-#       
-#                      
-#                      |    |    | 
-#                    [del~        ]
-#                      
---decl
-inp(4)
-outp(0)
---code
-SetDelay(mem(1),mem(2),mem(3))
-#df Set delay FX
-#i0 Call
-#i1 Set delay time
-#i2 Set delay amount
-#o0 Out
-~~
-14
-# [~~] set main volume
-#       
-#                      
-#                      |   
-#                    [~~]
-#      
---decl
-inp(1)
-outp(0)
---code
-SetVolume(mem(0))
-#df Set main volume
-#i0  Call
-#o0 Out
-osc~~
-14
-# [osc~~] play wave
-#        
-#                      *    
-#                      |   
-#                    [osc~~]
-#                      |
---decl
-inp(1)
-outp(0)
---code
-PlayWave(mem(0))
-#df Play sound wave
-#i0 Sound wave
-#o0 Out
+#df Output natural log of a number
 lerp
 15
-# [lerp] lerp a value between min and max 
-#                *      mn mx  r
-#                |      |    |     |
-#              [lerp                ]
+# [lerp] linear interpolation between 2 values
+#                r      a     b  
+#                |      |    |    
+#              [lerp          ]
 #                |
 --decl
-inp(4)
+inp(3)
 outp(1)
 --code
-mem(0) = Math.abs(mem(1)-mem(2)) * mem(3)
+mem(0) = (1 - mem(0)) * mem(1) + mem(0) * mem(2)
 out0(0)
 #df Out value between two numbers
-#i1 Set minimum range
-#i2 Set maximum range
-#i3 Set cursor range
+#i0 Set ratio [0-1]
+#i1 Set first value
+#i2 Set second value
 tab
-17
+18
 # a tab just an array that can be displayed and set by interacting
 #                              *  o  st
 #                              |  |  |
@@ -833,201 +478,12 @@ outp(1)
 memset(4)
 mem(3)=new Array(50).fill(0);
 --code
-mem(3)[mem(2)] = mem(0)
-mem(0) = mem(3)[mem(1)]
-out0(0)
-#i1 Read index
-#i2 Write index
-graph
-21
-# 2-dim tab that can be displayed and set by interacting
-#                              *  xo   yo xi   yi
-#                              |  |    |    |    | 
-#                              [graph             ] 
-#                              |  
-#
---decl
-inp(5)
-outp(1)
-memset(6)
-mem(5)=new Array()
-var i
-for (i=0; i<50;i++){ mem(5).push(new Array(50).fill(0)); }
---code
-mem(5)[mem(3)][mem(4)] = mem(0)
-mem(0) = mem(5)[mem(1)][mem(2)]
-out0(0)
-#i1 Read X-index
-#i2 Read Y-index
-#i3 Write X-index
-#i4 Write Y-index
-square
-16
-# [square] stroke a square
-#       
-#                *  x   y  s
-#                |  |   |   |
-#               [square       ]
-#                |
-#
---decl
-inp(4); outp(1)
---code
-OutputCanvas.StrokeSquare(mem(1),mem(2), mem(3))
-out0(0)
-#df Stroke a square
-#i1 Set x position
-#i2 Set y position
-#i3 Set dimension
-squarefill
-16
-# [squarefill] fill a square
-#       
-#                *  x   y  s
-#                |  |   |   |
-#               [squarefill      ]
-#                |
-#
---decl
-inp(4); outp(1)
---code
-OutputCanvas.FillSquare(mem(1),mem(2), mem(3))
-out0(0)
-#df Fill a square
-#i1 Set x position
-#i2 Set y position
-#i3 Set dimension
-rect
-17
-# [rect] stroke a rect
-#       
-#                *  x   y  w  h
-#                |  |   |   |   |
-#               [rect            ]
-#                |
-#
---decl
-inp(5); outp(1)
---code
-OutputCanvas.StrokeRect(mem(1),mem(2), mem(3), mem(4))
-out0(0)
-#df Stroke a rectangle
-#i1 Set x position
-#i2 Set y position
-#i3 Set rectangle width
-#i4 Set rectangle height
-rectfill
-17
-# [rectfill] fill a rect
-#       
-#                *  x   y  w  h
-#                |  |   |   |   |
-#               [rectfill         ]
-#                |
-#
---decl
-inp(5); outp(1)
---code
-OutputCanvas.FillRect(mem(1),mem(2), mem(3), mem(4))
-out0(0)
-#df Fill a rectangle
-#i1 Set x position
-#i2 Set y position
-#i3 Set rectangle width
-#i4 Set rectangle height
-circle
-16
-# [circle] stroke a circle
-#       
-#                *  x   y  s
-#                |  |   |   |
-#               [circle       ]
-#                |
-#
---decl
-inp(4); outp(1)
---code
-OutputCanvas.StrokeCircle(mem(1),mem(2), mem(3))
-out0(0)
-#df Stroke a circle
-#i1 Set x position
-#i2 Set y position
-#i3 Set radius
-circlefill
-16
-# [circlefill] fill a circle
-#       
-#                *  x   y  s
-#                |  |   |   |
-#               [circlefill       ]
-#                |
-#
---decl
-inp(4); outp(1)
---code
-OutputCanvas.FillCircle(mem(1),mem(2), mem(3))
-out0(0)
-#df Fill a circle
-#i1 Set x position
-#i2 Set y position
-#i3 Set radius
-line
-17
-# [line] draw a line
-#       
-#                *  x   y  x1  y1
-#                |  |   |   |   |
-#               [line             ]
-#                |
-#
---decl
-inp(5); outp(1)
---code
-OutputCanvas.DrawLine(mem(1),mem(2), mem(3), mem(4))
-out0(0)
-#df Draw a line
-#i1 Set x starting position
-#i2 Set y starting position
-#i1 Set x ending position
-#i2 Set y ending position
-arc
-17
-# [arc] stroke a arc
-#       
-#                *  x   y  r   a
-#                |  |   |   |   |
-#               [arc            ]
-#                |
-#
---decl
-inp(5); outp(1)
---code
-OutputCanvas.StrokeArc(mem(1),mem(2), mem(3), mem(4))
-out0(0)
-#df Stroke a arc
-#i1 Set x position
-#i2 Set y position
-#i3 Set radius
-#i4 Set atans
-arcfill
-17
-# [arcfill] fill a arc
-#       
-#                *  x   y  r   a
-#                |  |   |   |   |
-#               [arcfill             ]
-#                |
-#
---decl
-inp(5); outp(1)
---code
-OutputCanvas.FillArc(mem(1),mem(2), mem(3), mem(4))
-out0(0)
-#df Fill a arc
-#i1 Set x position
-#i2 Set y position
-#i3 Set radius
-#i4 Set atans
+out0(3)
+--ipf2
+mem(3)[mem(1)] = mem(2)
+#i0 Out value
+#i1 Write index
+#i2 Store value
 $
 11
 #     [$] Bang memory 1
@@ -1058,7 +514,7 @@ outp(1)
 --code
 mem(0) = Math.abs(mem(0))
 out0(0)
-#df Output absolute vallue
+#df Output absolute value
 pi
 8
 # Output pi
@@ -1069,319 +525,6 @@ outp(1)
 mem(0) = Math.PI
 out0(0)
 #df Output pi
-blocknonce
-16
-# [blocknonce] output nonce of a block
-#	        
-#
-#            block 
-#              |    
-#         [blocknonce] 
-#              |
---decl
-inp(1)
-outp(1)
---code
-if ( mem(0).timestamp != 'undefined'){Network.SetInternalBlock(mem(0));}
-mem(0) = Network.GetBlockNonce();
-out0(0)
-#df Output nonce of a blockchain block
-#i0 Block 
-blockprehash
-16
-# [blockprehash] output previous hash of block
-#	        
-#
-#            block 
-#              |    
-#         [blockprehash] 
-#              |
---decl
-inp(1)
-outp(1)
---code
-if ( mem(0).timestamp != 'undefined'){Network.SetInternalBlock(mem(0));}
-mem(0) = Network.GetBlockPreviousHash();
-out0(0)
-#df Output previous hash of a blockchain block
-#i0 Block 
-blocktx
-18
-# [blocktx] output address of a block transactions 
-#               at index
-#	        
-#
-#            block   index
-#              |       |
-#         [blocktx] 
-#              |
---decl
-inp(2)
-outp(1)
---code
-if ( mem(0).timestamp != 'undefined'){Network.SetInternalBlock(mem(0));}
-mem(0) = Network.GetBlockTransactionAddress(mem(1));
-out0(0)
-#df Output address of a block transaction
-#i0 Block
-#i1 Index
-blockgas
-16
-# [blockgas] output gas used inside block
-#	        
-#
-#            block 
-#              |    
-#         [blockgas] 
-#              |
---decl
-inp(1)
-outp(1)
---code
-if ( mem(0).timestamp != 'undefined'){Network.SetInternalBlock(mem(0));}
-mem(0) = Network.GetBlockGasUsed();
-out0(0)
-#df Output gas used inside blockchain block
-#i0 Block
-blocksize
-16
-# [blocksize] output byte length of block
-#	        
-#
-#            block 
-#              |    
-#         [blocksize] 
-#              |
---decl
-inp(1)
-outp(1)
---code
-if ( mem(0).timestamp != 'undefined'){Network.SetInternalBlock(mem(0));}
-mem(0) = Network.GetBlockBytesSize();
-out0(0)
-#df Output byte size of a blockchain block
-#i0 Block
-tx
-15
-# [tx] output transaction from address
-#	        
-#
-#           addr
-#           |    
-#         [tx ] 
-#           |
---decl
-inp(1)
-outp(1)
---code
-mem(0) = await Network.LoadTransaction(mem(0));
-out0(0)
-#df Output a transaction from address
-#i0 address
-txhash
-15
-# [txhash] output hash of transaction
-#	        
-#
-#          tx
-#          |    
-#         [txhash] 
-#          |
---decl
-inp(1)
-outp(1)
---code
-mem(0) = await Network.GetTransactionHash();
-out0(0)
-#df Output hash of a transaction
-#i0 blockchain transaction
-txgas
-15
-# [txgas] output gas used for this transaction
-#	        
-#
-#          tx
-#          |    
-#         [txgas] 
-#          |
---decl
-inp(1)
-outp(1)
---code
-mem(0) = await Network.GetTransactionGasUsed();
-out0(0)
-#df Output gas used for a transaction
-#i0 blockchain transaction
-txprice
-15
-# [txprice] output gas price when transaction validated
-#	        
-#
-#          tx
-#          |    
-#         [txgas] 
-#          |
---decl
-inp(1)
-outp(1)
---code
-mem(0) = await Network.GetTransactionGasPrice();
-out0(0)
-#df Output gas price spent for blockchain transaction
-#i0 blockchain transaction
-txcreator
-15
-# [txcreator] output address of transaction creator
-#	        
-#
-#          tx
-#          |    
-#         [txcreator] 
-#          |
---decl
-inp(1)
-outp(1)
---code
-mem(0) = await Network.GetTransactionAccountAddr();
-out0(0)
-#df Output wallet address of a blockchain transaction
-#i0 blockchain transaction
-loadcontract
-0
-storagesize
-15
-# [storagesize] output number of variables inside
-#	         smartcontract
-#
-#           *
-#           |    
-#         [storagesize] 
-#           |
---decl
-inp(1)
-outp(1)
---code
-mem(0) = Network.GetStorageLength();
-out0(0)
-#df Output number of variables inside a smartcontract
-#i0 Smartcontract object
-contractaddr
-15
-# [contractaddr] output address of a contract
-#	        
-#
-#           *
-#           |    
-#         [contractaddr] 
-#           |
---decl
-inp(1)
-outp(1)
---code
-mem(0) = Network.GetContractAddress();
-out0(0)
-#df Output blockchain contract address
-#i0 Smartcontract object
-storage
-20
-# [storage] output value of a smartcontract at address and 
-#               name of the variable 
-#	        
-#
-#            index 
-#            |    
-#         [storage  ] 
-#            |     |
---decl
-inp(1)
-outp(2)
-memset(3)
---code
-mem(3) = mem(0)
-mem(0) = await Network.GetStorageKeyAtIndex(mem(3));
-mem(1) = await Network.GetStorageValueAtIndex(mem(3));
-out1(1)
-out0(0)
-#df Output value stored inside smartcontract
-#i0 Key index
-gasprice
-13
-# [gasprice] output current gas price of ethereum 
-#	       network
-#
-#           * 
-#           |    
-#         [gasprice] 
-#           |
---decl
-inp(1)
-outp(1)
---code
-mem(0) = await Network.GetAverageGasPrice();
-out0(0)
-num2mutez
-5
---decl
-inp(1); outp(1)
---code
-mem(0) = StorageValueToMutez(mem(0))
-out0(0)
-num2tez
-5
---decl
-inp(1); outp(1)
---code
-mem(0) = StorageValueToTez(mem(0))
-out0(0)
-mutez2tez
-5
---decl
-inp(1); outp(1)
---code
-mem(0) = MutezToTez(mem(0))
-out0(0)
-tez2mutez
-5
---decl
-inp(1); outp(1)
---code
-mem(0) = TezToMutez(mem(0))
-out0(0)
-wei2ether
-5
---decl
-inp(1); outp(1)
---code
-mem(0) = WeiToEther(mem(0))
-out0(0)
-ether2wei
-5
---decl
-inp(1); outp(1)
---code
-mem(0) = EtherToWei(mem(0))
-out0(0)
-gwei2wei
-5
---decl
-inp(1); outp(1)
---code
-mem(0) = GweiToWei(mem(0))
-out0(0)
-ether2doll
-5
---decl
-inp(1); outp(1)
---code
-mem(0) = EtherToDollar(mem(0))
-out0(0)
-ether2eur
-5
---decl
-inp(1); outp(1)
---code
-mem(0) = EtherToEuro(mem(0))
-out0(0)
 msg
 11
 # [msg] pass a chain of characters.
@@ -1395,17 +538,6 @@ mem(1) = 'hello world'
 --code
 out0(1)
 #df  Pass a chain of characters when user click on it
-supermetaparam
-9
---decl
-inp(5)
---code
-# Code editor
- ide.CodeEditor.SetFont('font'+mem(1),mem(2),'');
- ide.CodeEditor.Draw()
-# Block
-VisualParameters.BlockBorderWidth = mem(3);
-VisualParameters.WireWidth = mem(4);
 arr
 8
 --decl
@@ -1427,24 +559,6 @@ mem(0) = mem(0).split(mem(1))
 out0(0)
 #df Split chain of character
 #i1 Set separator
-hz2midi
-7
---decl
-inp(1)
-outp(1)
---code
-mem(0) = 12 * (Math.log(mem(0)/220)/Math.log(2)) + 57
-out0(0)
-#df Output midi value from frequency
-midi2hz
-7
---decl
-inp(1)
-outp(1)
---code
-mem(0)=440*(Math.pow(2,((mem(0)-69)/12)))
-out0(0)
-#df Output frequency from midi value
 len
 7
 --decl
@@ -1453,4 +567,180 @@ outp(1)
 --code
 mem(0)=mem(0).length
 out0(0)
-#df Return length of an array
+#df Output length of an array
+max
+6
+--decl
+inp(2); outp(1);
+--code
+mem(0) = Math.max(mem(0),mem(1))
+out0(0)
+#df Output highest value from two number
+comm
+3
+--decl
+memset(1)
+mem(1) = "comment"
+float
+7
+--decl
+inp(1)
+outp(1)
+--code
+mem(0) = parseFloat(mem(0))
+out0(0)
+#df Convert a string to a float
+ceil
+7
+--decl
+inp(1)
+outp(1)
+--code
+mem(0) = Math.ceil(mem(0))
+out0(0)
+#df Output highest integer from a float value
+cos
+7
+--decl
+inp(1)
+outp(1)
+--code
+mem(0) = Math.cos(mem(0))
+out0(0)
+#df Output cosinus of a value
+packstr
+20
+# packstr a number of values into a single string. number of input 
+# bang at 0
+# declare number of inputs using packstr 8 or packstr 16...
+--decl
+inp(1)
+outp(1)
+memset(2)
+--code
+mem(0)="";
+for ( var i = 1; i < self.memory.length;i++){mem(0)+=mem(i)+" ";}
+out0(0)
+--arg
+# access argument using arg
+# we received arguments values.
+var n = parseInt(arg)
+n++;
+inp(n)
+#reinit memory
+for ( var i = 0; i < self.memory.length;i++){mem(i)=0}
+#df Pack a list of values into a single string
+unpack
+9
+#df Unpack array and bang from multiple outputs
+--decl
+inp(1)
+memset(2)
+--code
+for ( var i = 0; i < mem(0).length; i++){self.O_true(i,mem(0)[i]);}
+--arg
+var n = parseInt(arg)
+outp(n)
+sin
+7
+--decl
+inp(1)
+outp(1)
+--code
+mem(0) = Math.sin(mem(0))
+out0(0)
+#df Output sinus of a value
+matrix
+34
+#a matrix of 4x4 is array[4] of array[4]. we can set value like 
+#bang flush the matrix.
+#df Output a matrix of mutliple dimension
+--decl
+outp(1)
+memset(3)
+self.matrix = new Array();
+--code
+var ctr = 1
+for ( var y = 0 ; y < self.ySize; y++){
+for ( var x = 0 ; x < self.xSize; x++){
+self.matrix[y][x] = mem(ctr)
+ctr++
+}
+}
+mem(0) = self.matrix;
+out0(0)
+--arg
+console.log("ctr : "+ argctr +" arg : " + arg)
+#set up First dimension
+if ( argctr == 1){
+self.matrix = new Array(arg)
+self.xSize = arg;
+}
+#Set up second dimension
+if ( argctr == 2) {
+var ctr = 0; 
+for ( var i = 0; i < self.matrix.length; i++){
+self.matrix[i] = new Array(arg);
+ctr+=arg;
+}
+self.ySize = arg;
+inp(ctr+3)
+}
+list
+5
+#df Store values in an array
+#          r  wr  i
+#          |  |   |
+#          [list    ]
+#          |
+loopi
+7
+#df Bang its output a specific amount of time
+--decl
+inp(2)
+outp(1)
+--code
+for ( var i = 0 ; i < mem(1); i++) {self.O_true(0,i);}
+#i1 Set number of times
+html
+8
+#df Request HTML content
+--decl
+inp(1)
+outp(1)
+--code
+mem(0) =  await fetch(mem(0))
+out0(0)
+#i0 Set html link
+htmltxt
+7
+#df Output text component of an HTML response
+--decl
+inp(1)
+outp(1)
+--code
+mem(0) =  await mem(0).text();
+out0(0)
+pack
+21
+# pack a number of values into a single string. number of input 
+# bang at 0
+# declare number of inputs using packstr 8 or packstr 16...
+--decl
+inp(1)
+outp(1)
+memset(2)
+--code
+mem(0)=new Array();
+for ( var i = 1; i < self.memory.length;i++){mem(0).push(mem(i))}
+out0(0)
+--arg
+# access argument using arg
+# we received arguments values.
+console.log("received " + arg);
+var n = parseInt(arg)
+n++;
+inp(n)
+#reinit memory
+for ( var i = 0; i < self.memory.length;i++){mem(i)=0}
+#df Pack a list of values into a single array

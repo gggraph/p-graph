@@ -41,10 +41,8 @@ class TezosNetWork
         switch (name)
         {
             case "main": this.module = new taquito.TezosToolkit('https://mainnet.smartpy.io');break;
-            case "ithacanet": this.module = new taquito.TezosToolkit('https://ithacanet.ecadinfra.com'); 
-                                //this.client = new taquito.RpcClient('https://ithacanet.ecadinfra.com/', 'NetXjD3HPJJjmcd');
-                                break;
-            case "jakartanet": this.module = new taquito.TezosToolkit('https://jakartanet.ecadinfra.com');break;
+            case "ithacanet": this.module = new taquito.TezosToolkit('https://rpc.ghostnet.teztnets.xyz');  break;
+            case "jakartanet": this.module = new taquito.TezosToolkit('https://rpc.jakartanet.teztnets.xyz');break;
 
         }
              
@@ -107,7 +105,7 @@ class TezosNetWork
         // BLEoQGpV3sZ5At92LE8hMqzt5Jh3UtaaFhcZRD936Sc5yy7qfV1
         return this.block.hash;
     }
-    GetBlockHexNonce()
+    GetBlockHexNonce() //wonky
     {
         // return an hex nonce
         // Get Object -> proof_of_work_nonce which is an Hex value
