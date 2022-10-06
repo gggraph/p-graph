@@ -157,14 +157,16 @@ will output ten times in a row the value of its second memory slot
 
 ## Save and share
 
-User can save its patch or any block's code modification done easily in a readable format. 
+Patches can be saved in different format : **.map .lib** or **.pgr**
 
-Patch can be saved as .map file ( this file does not contains block code ) or the whole project (code and patch structure) as .tezgr file
+* **.map** contains only the patch structure data (blocks posititon and wiring informations)
+* **.lib** contains only libraries that are actually loaded. Libraries contain block's codes.
+* **.pgr** contains the whole project : librairies and patch structure.
 
-Code can be saved separately as .lib file. 
+Those files can be loaded on other cession. You can either **import** them or **open** them.
 
-Those file can be shared and loaded to other cession. You can either load those file to overwrite current files used or import to add patch structure
-to an existing one or expand block possibility for .lib file. Comparing to **Pd**, .map file are similar to .pd file.
+Opening a project file (**.pgr**) will overwrite current project, but importing it will add the new patch
+to current project.
 
 ## What's new?
 
