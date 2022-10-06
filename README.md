@@ -174,7 +174,7 @@ to current project.
 
 * Complete overhaul of the audio processing.
 * Adding 3d geometry lib
-* Inlets, outlets and virtualisation is now here. **[virtual ]** & **[ditto ]**  blocks create instances of a window.
+* Inlets, outlets and virtualisation are now here. **[virtual ]** & **[ditto ]**  blocks create instances of a window.
 * Lot of new code region, allowing to run code on specific event. (eg. --end run when block being destroyed)
 
 ## Extensions
