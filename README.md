@@ -95,7 +95,7 @@ out0(0)
 ```
 This block add the value it received in first input by the value it received in second input. Then propagate the result to its first output.
 
-Code **segment** are define using **region**. Any line behind declarator are specific to its region until another region is declared.
+Code **segment** are defined using **region**. Any line behind declarator are specific to its region until another region is declared.
 
 | region name     | event                                |
 | --------------- | ------------------------------------ |
@@ -104,6 +104,8 @@ Code **segment** are define using **region**. Any line behind declarator are spe
 | --ipf*          | run when a given input receive value |
 
 *--ipf takes one argument. --ipf1 run when second input receive value. --ipf0 is overwritten by --code region.* 
+
+There is **specific functions** that gives easier access to P-Graph system behaviour.  
 
 | function name   | behaviour                            |
 | --------------- | ------------------------------------ |
@@ -114,12 +116,44 @@ Code **segment** are define using **region**. Any line behind declarator are spe
 | out*            | Output a memory slot value           |
 | self            | Access block object                  |
 
-*out takes one argument. out0 will throw value to first block's output. out2 will throw value to third block's output.
+*out takes one argument. out0 will throw value to first block's output. out2 will throw value to third block's output.*
 
 Note that memory slot length of a block equals its input number at creation. memset can be used to extend block memory to handle more data.
 
+Knowing that, let's read again block [+  ] code and decode it's behaviour.
+
+```
+--decl                # Start of the 'Declaration' region. It run at block creation
+inp(2)                    # Set number of input to 2. Block will have 2 inputs
+outp(1)                   # Set number of output to 1. Block will have 1 output
+
+--code                # Start of the 'Code' region. It run when first input receive a value
+mem(0) += mem(1)          # Add value of memory slot #0 the value of memory slot#1 
+out0(0)                   # Output value of memory slot #0 to first block's output
+
+```
 
 Otherwise any javascript code inside region will work good if not conflicting with functions above.
+
+For example, a block with
+
+```
+--code 
+mem(0) = Math.PI
+out0(0)
+```
+
+will output PI.
+
+And a block with
+
+```
+--code 
+var foo = 10
+while ( foo > 0 ) {  out0(1) ; foo--; }
+```
+will output ten times in a row the value of its second memory slot
+
 
 ## Save and share
 
