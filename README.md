@@ -161,7 +161,7 @@ Patches can be saved in different format : **.map .lib** or **.pgr**
 
 * **.map** contains only the patch structure data (blocks posititon and wiring informations)
 * **.lib** contains only libraries that are actually loaded. Libraries contain block's codes.
-* **.pgr** contains the whole project : librairies and patch structure.
+* **.pgr** contains the whole project : libraries and patch structure.
 
 Those files can be loaded on other cession. You can either **import** them or **open** them.
 
