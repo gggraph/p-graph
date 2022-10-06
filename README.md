@@ -47,27 +47,24 @@ Here some of the most important shortkey/tips you should know before starting a 
 *  Hold **[control]** key above a block to see its documentation.
 *  Hold **[control]** key to interact with specific block in edit mode (default mode).
 
-## Outputs
+## Processing
 
-**P-Graph can output graphics to any canvas**. 
+**P-Graph can do audio and visual rendering**. 
 
-Left side of interface is the main screen where any block's code will draw by default.
-Most **HTML5 canvas graphics command** are implemented to blocks'code. For example, **[pix]** block will draw a pixel to the current screen. **[rect]** block
-will fill a rectangle, etc..
-
-Double clicking on the main screen will open a mini portable screen which can be more convenient to work with! 
-
-**It uses the Web Audio API**. Read audio documentation to get further. See [a dummy patch of a single-oscillator synth](https://raw.githubusercontent.com/gggraph/p-graph/main/git-content/synthseq.mp4)
+**It uses AudioWorkletProcessor** to process audio signals. Most arithmetic function of Pd is here. Read audio documentation to get further. 
 
 https://user-images.githubusercontent.com/62741099/193688893-0c391145-5455-455b-b7a4-5341fa7a384d.mp4
 
 **An example of a polyphonic FM synth with 16-voices. 6 oscillators per voice. One ADSR enveloppe per oscillator**
 **This patch can be loaded in example>sound>dx7**
 
+Left side of interface is the main screen where any block's code will draw by default.
+Most **HTML5 canvas graphics command** are implemented as block. For example, **[pix]** block will draw a pixel to the current screen. **[rect]** block
+will stroke a rectangle, etc..
 
 https://user-images.githubusercontent.com/62741099/194303052-c7405d6f-fd4e-4b53-9f0c-63b9fc24d754.mp4
 
-**An example of a simple 3D viewer which render Stanford tea pot using vector mathematics in a customizable render pipe line.**
+**An example of a simple 3D viewer which render Stanford tea pot .obj using vector mathematics in a customizable render pipe line.**
 **This patch can be loaded in example>visual>3D**
 
 ## Code editor
@@ -75,6 +72,7 @@ https://user-images.githubusercontent.com/62741099/194303052-c7405d6f-fd4e-4b53-
   <img src=git-content/helloworld.gif width="400" height="600"/>
 </p>  
 
+One of the strong part of P-Graph is its ability to evaluate and run 
 A code editor is implemented that allows user to **directly change blocks behaviour** and write new type of block to **extend the system**. 
 Code modification is 'interpreted' at run time and can operate even when the patch is running.
 
