@@ -1556,9 +1556,21 @@ class TabBlock extends Block
         if ( IsMouseInsideBox(this.bodyBox,this.displayCanvas) && mousepressed && (ctrlPressed||Editor.inPlayMode)
            && !UserIsGrabbing && !UserIsTyping && !UserIsWiring)
         {
-           var val = mouseY - this.displayCanvas.box.y - this.bodyBox.y;
-           var index = Math.round((mouseX - this.displayCanvas.box.x - this.bodyBox.x) / 100 * 50);
-           this.memory[3][index] = val; return;
+             this.waspressed = true;
+             UserIsGrabbing = true;
+             return;
+        }
+        
+        if ( this.waspressed)
+        {
+            if (mousepressed && (ctrlPressed||Editor.inPlayMode) )
+            {
+                    var val = mouseY - this.displayCanvas.box.y - this.bodyBox.y;
+                   var index = Math.round((mouseX - this.displayCanvas.box.x - this.bodyBox.x) / 100 * 50);
+                   this.memory[3][index] = val; return;
+            }
+             this.waspressed = false;
+             UserIsGrabbing = false;
         }
         this.DefaultInteract();
     }
@@ -1611,14 +1623,27 @@ class GraphBlock extends Block
             this.DefaultInteract();
             return;
         }
+        
         if ( IsMouseInsideBox(this.bodyBox,this.displayCanvas) && mousepressed && (ctrlPressed||Editor.inPlayMode)
            && !UserIsGrabbing && !UserIsTyping && !UserIsWiring)
         {
-            var x = Math.round((mouseX - this.displayCanvas.box.x - this.bodyBox.x) / 100 * 50);
-            var y = Math.round((mouseY - this.displayCanvas.box.y - this.bodyBox.y) / 100 * 50);
-            this.memory[5][x][y] = 1;
-            return;
+             this.waspressed = true;
+             UserIsGrabbing = true;
+             return;
         }
+        
+        if ( this.waspressed)
+        {
+            if (mousepressed && (ctrlPressed||Editor.inPlayMode) )
+            {
+                var x = Math.round((mouseX - this.displayCanvas.box.x - this.bodyBox.x) / 100 * 50);
+                var y = Math.round((mouseY - this.displayCanvas.box.y - this.bodyBox.y) / 100 * 50);
+                this.memory[5][x][y] = 1;
+            }
+             this.waspressed = false;
+             UserIsGrabbing = false;
+        }
+        
         this.DefaultInteract();
     }
 }
