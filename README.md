@@ -168,15 +168,14 @@ Those files can be loaded on other cession. You can either **import** them or **
 Opening a project file (**.pgr**) will overwrite current project, but importing it will add the new patch
 to current project.
 
-## What's new?
+## What's new? 
 
-**03.09.2022**
+**06.10.2022**
 
-* **New IO mechanism** All blocks can trigger code from any of its inputs and not just first input.
-* Improving special block code readibility. Now, each special blocks has its own class extension of Block.
-* Improving visual parameters code. 
-* Improving documentation. User can now set mouse on block and see tips while holding control key.
-
+* Complete overhaul of the audio processing.
+* Adding 3d geometry lib
+* Inlets, outlets and virtualisation is now here. **[virtual ]** & **[ditto ]**  blocks create instances of a window.
+* Lot of new code region, allowing to run code on specific event. (eg. --end run when block being destroyed)
 
 ## Extensions
 
