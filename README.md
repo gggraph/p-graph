@@ -51,12 +51,16 @@ Here some of the most important shortkey/tips you should know before starting a 
 
 **P-Graph can do audio and visual rendering**. 
 
-**It uses AudioWorkletProcessor** to process audio signals. Most arithmetic function of Pd is here. Read audio documentation to get further. 
+### Audio
+
+**It uses AudioWorkletProcessor** to process audio signals. Most arithmetic function on audio are here. Read audio documentation to get further. 
 
 https://user-images.githubusercontent.com/62741099/193688893-0c391145-5455-455b-b7a4-5341fa7a384d.mp4
 
 **An example of a polyphonic FM synth with 16-voices. 6 oscillators per voice. One ADSR enveloppe per oscillator**
 **This patch can be loaded in example>sound>dx7**
+
+### Visual
 
 Left side of interface is the main screen where any block's code will draw by default.
 Most **HTML5 canvas graphics command** are implemented as block. For example, **[pix]** block will draw a pixel to the current screen. **[rect]** block
@@ -72,30 +76,24 @@ https://user-images.githubusercontent.com/62741099/194303052-c7405d6f-fd4e-4b53-
   <img src=git-content/helloworld.gif width="400" height="600"/>
 </p>  
 
-One of the strong part of P-Graph is its ability to evaluate and run 
-A code editor is implemented that allows user to **directly change blocks behaviour** and write new type of block to **extend the system**. 
+One of the strong part of P-Graph is its **ability to evaluate and run block's code on the fly** since it's written in javascript. Even if javascript is less efficient than C/C++ code, we can get rid of pointers and memory management. It makes the P-Graph structure a lot more readable and opened to direct modification.
+
+A code editor is implemented that allows user to **directly change blocks behaviour** and create new type of block to **extend the system**. 
 Code modification is 'interpreted' at run time and can operate even when the patch is running.
 
-```
+Let's read the code of the block **[+ ]**
 
-# a comment
+```
 --decl
 inp(2)
-outp(3)
-memset(5)
+outp(1)
 
 --code
-mem(0) = 'hello world'
-mem(2) = mem(0) + Math.PI
+mem(0) += mem(1)
 out0(0)
 
---ipf2
-mem(1) = 'called from non-standard input!'
-out1(1)
-
 ```
-This block code above has any **langage-specific words you should learn** to understand how the system works. This code will output 'Hello world' when 
-first input is triggered. Let's see why.
+This block add the value it received in first input by the value it received in second input. Then propagate the result to its first output.
 
 Code **segment** are define using **region**. Any line behind declarator are specific to its region until another region is declared.
 
@@ -103,24 +101,23 @@ Code **segment** are define using **region**. Any line behind declarator are spe
 | --------------- | ------------------------------------ |
 | --decl          | run at block creation                |
 | --code          | run when first input receive value   |
-| --ipf4          | run when fifth input receive value   |
-| --ipf1          | run when second input receive value  |
+| --ipf*          | run when a given input receive value |
 
-**Note that any number can follow --ipf region while there is enough inputs to the block** 
+*--ipf takes one argument. --ipf1 run when second input receive value. --ipf0 is overwritten by --code region.* 
 
 | function name   | behaviour                            |
 | --------------- | ------------------------------------ |
 | inp             | Set number of input of the block     |
 | outp            | Set number of output of the block    |
-| memset*         | Set number of block's memory slots   |
+| memset          | Set number of block's memory slots   |
 | mem             | Access memory slot value             |
-| out0            | Output memory slot value at first input
-| out1          | Output memory slot value at second input
+| out*            | Output a memory slot value           |
+| self            | Access block object                  |
 
+*out takes one argument. out0 will throw value to first block's output. out2 will throw value to third block's output.
 
-**Note that memory slot length of a block equals its input number at creation. memset can be used to extend block memory to handle more data**
+Note that memory slot length of a block equals its input number at creation. memset can be used to extend block memory to handle more data.
 
-**Note that argument of out instruction is a memory slot index**
 
 Otherwise any javascript code inside region will work good if not conflicting with functions above.
 
