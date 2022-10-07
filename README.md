@@ -40,12 +40,15 @@ To get familiar with **P-Graph** system, you should load example projects and ge
 
 Here some of the most important shortkey/tips you should know before starting a new patch
 
-*  Press **[n]** key to create a new block at mouse position. This will greatly increase your workflow.
-*  Double click on block to rename it. Once renamed, block will automatically be reload from library entries if type is found.
-*  Press **[suppr]** key when renaming a block will delete the block.
+*  Press **[n]** key to create a new block at mouse position.
+*  Double click on block to define/rename it (it should appear blue). Press **[enter]** when done.
+   ( eg : type [knob 0 100] to create a knob that will output values between 0 and 100, type [number ] to create a number block... etc.)
+*  While renaming a block, press **[suppr]** key to destroy it. 
 *  Press **[enter]** key to show/hide code editor. 
-*  Hold **[control]** key above a block to see its documentation.
-*  Hold **[control]** key to interact with specific block in edit mode (default mode).
+*  Hold **[control]** key to interact with a special block in edit mode (default mode).
+*  Go to **File>Edit** to change interaction mode. Play mode let user interact with knob/slider... blocks without holding control key.
+*  Click and drag i/o to **wire blocks**.
+*  Double click on any i/o to **delete its wires**.
 
 ## Processing
 
